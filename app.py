@@ -14,6 +14,9 @@ logger = logging.getLogger(__name__)
 TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
 TELEGRAM_BOT_URL = os.environ.get('TELEGRAM_BOT_URL')
 app = Flask(__name__)
+mybot = Updater(TOKEN)
+dp = mybot.dispatcher
+logger.info("START")
 
 
 def start(bot, update):
@@ -71,8 +74,6 @@ def error(bot, update, error):
 
 
 def main():
-    mybot = Updater(TOKEN)
-    dp = mybot.dispatcher
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(
                     RegexHandler('^(Посмотреть расписание)$', 
@@ -83,7 +84,7 @@ def main():
     dp.add_handler(CommandHandler('google_auth', google_auth))
     dp.add_handler(MessageHandler(Filters.text, message))
     dp.add_error_handler(error)
-
+    logger.info("START POLLING")
     mybot.start_polling()
     mybot.idle()
 
@@ -115,6 +116,8 @@ def login():
     print(session.get('https://www.googleapis.com/userinfo/v2/me').json())
 
 
+logger.info("MAIN")
+main()
+
 if __name__ == "__main__":
-    main()
     app.run()
