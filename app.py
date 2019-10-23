@@ -34,7 +34,8 @@ def help(bot, context):
     print("WE ARE HERE")
     text = "Чтобы запустить бота, нажмите /start"
     print(context.message.chat_id)
-    bot.send_message(context.message.chat_id, text)
+    print(context)
+    bot.sendMessage(context.message.chat_id, text)
 
 
 def message(bot, context):
@@ -54,6 +55,7 @@ def main():
     dp.add_error_handler(error)
     thread = Thread(target=dp.start, name='dp')
     thread.start()
+
 
 main()
 
