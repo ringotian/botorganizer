@@ -7,6 +7,7 @@ logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO,
                     )
 TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
+TOKEN = '847797756:AAGZuJN5jBfCVBW2YSPHw4f-_KcXrcyk-zQ'
 
 
 def start(bot, update):
@@ -15,7 +16,12 @@ def start(bot, update):
     update.message.reply_text(text, reply_markup=my_keyboard)
 
 
-def message(bot, update, user_data):
+def help(bot, update):
+    text = "HELP"
+    update.message.reply_text(text)
+
+
+def message(bot, update):
     user_text = "Привет {}! Ты написала: {}".format(
                 update.message.chat.first_name, update.message.text
                 )
@@ -26,6 +32,7 @@ def main():
     mybot = Updater(TOKEN)
     dp = mybot.dispatcher
     dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler("help", help))
     dp.add_handler(MessageHandler(Filters.text, message))
 
     mybot.start_polling()
