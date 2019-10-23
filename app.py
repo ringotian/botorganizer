@@ -32,7 +32,7 @@ def start(bot, context):
 
 def help(bot, context):
     text = "Чтобы запустить бота, нажмите /start"
-    context.bot.sendMessage(context.message.chat_id, text)
+    bot.send_message(context.message.chat_id, text)
 
 
 def message(bot, context):
@@ -60,7 +60,7 @@ def webhook():
         update = Update.de_json(request.get_json(force=True), bot)
         logger.info("Получено обновление {}".format(update.message.text))
         update_queue.put(update)
-        return request.get_json()
+        return 'ok'
     else:
         return redirect("https://t.me/life_organizer_bot", code=302)
 
