@@ -27,18 +27,18 @@ def start(bot, context):
         ['Расписание'], ['Добавить задачу в trello'], ['Заметки']
     ]
     main_menu_keyboard = ReplyKeyboardMarkup(keyboard)
-    bot.sendMessage(context.message.chat_id, reply_markup=main_menu_keyboard)
+    context.bot.sendMessage(context.message.chat_id, reply_markup=main_menu_keyboard)
 
 
 def help(bot, context):
     text = "Чтобы запустить бота, нажмите /start"
-    bot.sendMessage(context.message.chat_id, text)
+    context.bot.sendMessage(context.message.chat_id, text)
 
 
 def message(bot, context):
     telegram_user = context.message.from_user
     text = f'Привет, пользователь {telegram_user.id}'
-    bot.sendMessage(context.message.chat_id, text)
+    context.bot.sendMessage(context.message.chat_id, text)
 
 
 def error(bot, context, error):
