@@ -2,11 +2,14 @@ import logging
 import os
 from telegram import ReplyKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from flask import Flask, redirect
 
 logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO,
                     )
 TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
+TELEGRAM_BOT_URL = os.environ.get('TELEGRAM_BOT_URL')
+app = Flask(__name__)
 
 
 def start(bot, update):
@@ -38,5 +41,11 @@ def main():
     mybot.idle()
 
 
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    return redirect(TELEGRAM_BOT_URL, code=302)
+
+
 if __name__ == "__main__":
     main()
+    app.run()
