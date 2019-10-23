@@ -33,7 +33,7 @@ def start(bot, context):
 def help(bot, context):
     print("WE ARE HERE")
     text = "Чтобы запустить бота, нажмите /start"
-    print(context.message.chat_id)
+    print(message.chat_id)
     print(context)
     bot.sendMessage(context.message.chat_id, text)
 
