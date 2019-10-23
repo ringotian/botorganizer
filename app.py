@@ -2,7 +2,8 @@ import logging
 import os
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, \
                     InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, \
+                        RegexHandler
 from flask import Flask, redirect
 from google_auth_oauthlib.flow import Flow
 
@@ -37,6 +38,11 @@ def help(bot, update):
     update.message.reply_text(text)
 
 
+def check_agenda(bot, update, user_data):
+    text = "Вот твое расписание на сегодня"
+    update.message.reply_text(text)
+
+
 def message(bot, update):
     user_text = "Привет {}! Ты написала: {}".format(
                 update.message.chat.first_name, update.message.text
@@ -68,6 +74,11 @@ def main():
     mybot = Updater(TOKEN)
     dp = mybot.dispatcher
     dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(
+                    RegexHandler('^(Посмотреть расписание)$', 
+                    check_agenda, 
+                    pass_user_data=True)
+                )
     dp.add_handler(CommandHandler("help", help))
     dp.add_handler(CommandHandler('google_auth', google_auth))
     dp.add_handler(MessageHandler(Filters.text, message))
