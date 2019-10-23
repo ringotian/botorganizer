@@ -15,8 +15,10 @@ logger = logging.getLogger(__name__)
 
 TOKEN = environ.get('TELEGRAM_BOT_TOKEN')
 URL = "https://{}.herokuapp.com/".format(environ.get('HEROKU_APP_NAME'))
-
+logger.info(TOKEN)
+print(TOKEN)
 bot = Bot(TOKEN)
+print(bot.__dir__)
 update_queue = Queue()
 dp = Dispatcher(bot, update_queue)
 app = Flask(__name__)
