@@ -48,9 +48,11 @@ def main():
     dp.add_handler(CommandHandler('help', help))
     dp.add_handler(MessageHandler(Filters.text, message))
     dp.add_error_handler(error)
-
     thread = Thread(target=dp.start, name='dp')
     thread.start()
+
+
+main()
 
 
 @app.route('/{}'.format(TOKEN), methods=['GET', 'POST'])
@@ -80,5 +82,4 @@ def set_webhook():
 
 
 if __name__ == '__main__':
-    main()
     app.run()
