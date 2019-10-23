@@ -18,7 +18,7 @@ bot = Bot(TOKEN)
 print(TOKEN)
 print(bot.__dir__)
 update_queue = Queue()
-dp = Dispatcher(bot, update_queue)
+dp = Dispatcher(bot, update_queue, use_context=True)
 app = Flask(__name__)
 """
 
