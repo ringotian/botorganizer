@@ -52,9 +52,6 @@ def main():
     thread.start()
 
 
-main()
-
-
 @app.route('/{}'.format(TOKEN), methods=['GET', 'POST'])
 def webhook():
     if request.method == "POST":
@@ -82,4 +79,5 @@ def set_webhook():
 
 
 if __name__ == '__main__':
+    main()
     app.run()
