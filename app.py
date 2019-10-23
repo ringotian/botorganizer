@@ -9,20 +9,22 @@ from google_auth_oauthlib.flow import Flow
 logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO,
                     )
+logger = logging.getLogger(__name__)
 TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
 TELEGRAM_BOT_URL = os.environ.get('TELEGRAM_BOT_URL')
 app = Flask(__name__)
 
 
 def start(bot, update):
+    text = 'Привет! Что ты хочешь сделать?'
     my_keyboard = ReplyKeyboardMarkup([
-                                    ['Расписание'], ['Создать мероприятие']]
+                                    ['Посмотреть расписание'], ['Создать мероприятие']]
                                     )
-    update.message.reply_text(reply_markup=my_keyboard)
+    update.message.reply_text(text, reply_markup=my_keyboard)
 
 
 def google_auth(bot, update):
-    auth_url = f"https://{environ.get('HEROKU_APP_NAME')}.herokuapp.com/login/"
+    auth_url = f"https://{os.environ.get('HEROKU_APP_NAME')}.herokuapp.com/login/"
     keyboard = [
                 [InlineKeyboardButton('Нажми на ссылку, чтобы авторизоваться в гугле', url=auth_url)]
                 ]
@@ -41,6 +43,11 @@ def message(bot, update):
                 )
     update.message.reply_text(user_text)
 
+
+def error(bot, update, error):
+    logger.warn('Update "%s" caused error "%s"' % (update, error))
+
+
 # def google_auth_flow():
 #     scopes = ["https://www.googleapis.com/auth/calendar"]
 #     client_config_data = {
@@ -56,6 +63,7 @@ def message(bot, update):
 #         scopes=scopes,
 #         redirect_uri=os.environ.get("GOOGLE_REDIRECT_URI"))   
 
+
 def main():
     mybot = Updater(TOKEN)
     dp = mybot.dispatcher
@@ -63,6 +71,7 @@ def main():
     dp.add_handler(CommandHandler("help", help))
     dp.add_handler(CommandHandler('google_auth', google_auth))
     dp.add_handler(MessageHandler(Filters.text, message))
+    dp.add_error_handler(error)
 
     mybot.start_polling()
     mybot.idle()
