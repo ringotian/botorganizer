@@ -23,7 +23,7 @@ def message(bot, update, user_data):
 
 
 def main():
-    mybot = Updater()
+    mybot = Updater(TOKEN)
     dp = mybot.dispatcher
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(MessageHandler(Filters.text, message))
