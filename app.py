@@ -62,7 +62,7 @@ def webhook():
         update = Update.de_json(request.get_json(force=True), bot)
         logger.info("Получено обновление {}".format(update.message.text))
         update_queue.put(update)
-        return "OK"
+        return request.get_json()
     else:
         return redirect("https://t.me/life_organizer_bot", code=302)
 
