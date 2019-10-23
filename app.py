@@ -35,7 +35,7 @@ def help(bot, context, use_context=True):
     text = "Чтобы запустить бота, нажмите /start"
     #print(message.chat_id)
     print(context.chat_data)
-    context.bot.send_message(chat_id=context.effective_chat.id, text)
+    context.bot.send_message(chat_id=context.effective_chat.id, text=text)
 
 
 def message(bot, context):
