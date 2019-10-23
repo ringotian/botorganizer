@@ -30,10 +30,10 @@ def start(bot, context):
     context.bot.sendMessage(context.message.chat_id, reply_markup=main_menu_keyboard)
 
 
-def help(bot, context):
+def help(bot, context, use_context=True):
     print("WE ARE HERE")
     text = "Чтобы запустить бота, нажмите /start"
-    print(message.chat_id)
+    #print(message.chat_id)
     print(context)
     bot.sendMessage(context.message.chat_id, text)
 
