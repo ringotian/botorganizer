@@ -20,7 +20,7 @@ print(bot.__dir__)
 update_queue = Queue()
 dp = Dispatcher(bot, update_queue, use_context=True)
 app = Flask(__name__)
-"""
+
 
 def start(bot, context):
     keyboard = [
@@ -52,17 +52,17 @@ def main():
     dp.add_error_handler(error)
     thread = Thread(target=dp.start, name='dp')
     thread.start()
-"""
-# @app.route('/{}'.format(TOKEN), methods=['GET', 'POST'])
-# def webhook():
-#     if request.method == "POST":
-#         # retrieve the message in JSON and then transform it to Telegram object
-#         update = Update.de_json(request.get_json(force=True), bot)
-#         logger.info("Получено обновление {}".format(update.message.text))
-#         update_queue.put(update)
-#         return request.get_json()
-#     else:
-#         return redirect("https://t.me/life_organizer_bot", code=302)
+
+@app.route('/{}'.format(TOKEN), methods=['GET', 'POST'])
+def webhook():
+    if request.method == "POST":
+        # retrieve the message in JSON and then transform it to Telegram object
+        update = Update.de_json(request.get_json(force=True), bot)
+        logger.info("Получено обновление {}".format(update.message.text))
+        update_queue.put(update)
+        return request.get_json()
+    else:
+        return redirect("https://t.me/life_organizer_bot", code=302)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -70,16 +70,15 @@ def index():
     return redirect("https://t.me/life_organizer_bot", code=302)
 
 
-
-# @app.route('/set_webhook', methods=['GET', 'POST'])
-# def set_webhook():
-#     s = bot.set_webhook(f"{URL}{TOKEN}")
-#     if s:
-#         return "webhook setup ok"
-#     else:
-#         return "webhook setup failed"
+@app.route('/set_webhook', methods=['GET', 'POST'])
+def set_webhook():
+    s = bot.set_webhook(f"{URL}{TOKEN}")
+    if s:
+        return "webhook setup ok"
+    else:
+        return "webhook setup failed"
 
 
 if __name__ == '__main__':
- #   main()
+    main()
     app.run()
