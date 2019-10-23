@@ -6,8 +6,6 @@ from queue import Queue
 from threading import Thread
 from flask import Flask, request, redirect
 
-MONGO_URL = '{}?retryWrites=false'.format(environ.get('MONGODB_URI'))
-
 logging.basicConfig(
                 format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                 level=logging.DEBUG)
@@ -15,14 +13,12 @@ logger = logging.getLogger(__name__)
 
 TOKEN = environ.get('TELEGRAM_BOT_TOKEN')
 URL = "https://{}.herokuapp.com/".format(environ.get('HEROKU_APP_NAME'))
-logger.info(TOKEN)
-print(TOKEN)
+
 bot = Bot(TOKEN)
 print(bot.__dir__)
 update_queue = Queue()
 dp = Dispatcher(bot, update_queue)
 app = Flask(__name__)
-app.config['MONGO_URI'] = MONGO_URL
 
 
 def start(bot, context):
