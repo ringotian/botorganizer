@@ -7,7 +7,6 @@ logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO,
                     )
 TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
-TOKEN = '847797756:AAGZuJN5jBfCVBW2YSPHw4f-_KcXrcyk-zQ'
 
 
 def start(bot, update):
