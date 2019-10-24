@@ -132,9 +132,11 @@ def auth():
 
 @app.route('/login/gcallback', methods=['GET', 'POST'])
 def gcallback():
-    code = request.args.get("code")
-    print(code)
-    return code
+    google_auth_code = request.args.get("code")
+    flow.fetch_token(code=google_auth_code)
+    session = flow.authorized_session()
+    print(session.get('https://www.googleapis.com/userinfo/v2/me').json())
+    return "ok"
 
 
 if __name__ == "__main__":
