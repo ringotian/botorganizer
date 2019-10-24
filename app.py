@@ -97,7 +97,7 @@ thread.start()
 flow = google_auth_flow()
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login/', methods=['GET', 'POST'])
 def login():
     auth_url, _ = flow.authorization_url(prompt='consent')
     #google_code = input('Введите код авторизации: ')
