@@ -147,6 +147,7 @@ def login():
     flow.fetch_token(code=google_code)
     session = flow.authorized_session()
     print(session.get('https://www.googleapis.com/userinfo/v2/me').json())
+    return "We has been here"
 
 
 if __name__ == "__main__":
