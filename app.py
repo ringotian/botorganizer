@@ -1,10 +1,12 @@
 import logging
 import os
-from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, \
+from queue import Queue
+from threading import Thread
+from telegram import Bot, Update, ReplyKeyboardMarkup, InlineKeyboardButton, \
                     InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, \
+from telegram.ext import Dispatcher, CommandHandler, MessageHandler, Filters, \
                         RegexHandler
-from flask import Flask, redirect
+from flask import Flask, redirect, request
 from google_auth_oauthlib.flow import Flow
 
 logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
@@ -13,9 +15,8 @@ logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
 logger = logging.getLogger(__name__)
 TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
 TELEGRAM_BOT_URL = os.environ.get('TELEGRAM_BOT_URL')
+URL = "https://{}.herokuapp.com/".format(os.environ.get('HEROKU_APP_NAME'))
 app = Flask(__name__)
-mybot = Updater(TOKEN)
-dp = mybot.dispatcher
 logger.info("START")
 
 
@@ -73,20 +74,52 @@ def error(bot, update, error):
 #         redirect_uri=os.environ.get("GOOGLE_REDIRECT_URI"))   
 
 
-def main():
-    dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(
-                    RegexHandler('^(Посмотреть расписание)$', 
-                    check_agenda, 
-                    pass_user_data=True)
-                )
-    dp.add_handler(CommandHandler("help", help))
-    dp.add_handler(CommandHandler('google_auth', google_auth))
-    dp.add_handler(MessageHandler(Filters.text, message))
-    dp.add_error_handler(error)
-    logger.info("START POLLING")
-    mybot.start_polling()
-    mybot.idle()
+#def setup_bot(token=TOKEN):
+bot = Bot(TOKEN)
+update_queue = Queue()
+
+dp = Dispatcher(bot, update_queue)
+
+dp.add_handler(CommandHandler("start", start))
+dp.add_handler(
+                RegexHandler('^(Посмотреть расписание)$', 
+                check_agenda, 
+                pass_user_data=True)
+            )
+dp.add_handler(CommandHandler("help", help))
+dp.add_handler(CommandHandler('google_auth', google_auth))
+dp.add_handler(MessageHandler(Filters.text, message))
+dp.add_error_handler(error)
+
+thread = Thread(target=dp.start, name='dp')
+thread.start()
+
+    #return update_queue
+
+
+#bot_update_queue = setup_bot(TOKEN)
+
+
+@app.route('/{}'.format(TOKEN), methods=['GET', 'POST'])
+def webhook():
+    if request.method == "POST":
+        # retrieve the message in JSON and then transform it to Telegram object
+        update = Update.de_json(request.get_json(force=True), bot)
+        print(update)
+        logger.info("Получено обновление {}".format(update.message.text))
+        update_queue.put(update)
+        return "OK"
+    else:
+        return redirect("https://t.me/testtesttesgooglecalendarbot", code=302)
+
+
+@app.route('/set_webhook', methods=['GET', 'POST'])
+def set_webhook():
+    s = bot.set_webhook(f"{URL}{TOKEN}")
+    if s:
+        return "webhook setup ok"
+    else:
+        return "webhook setup failed"
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -115,9 +148,6 @@ def login():
     session = flow.authorized_session()
     print(session.get('https://www.googleapis.com/userinfo/v2/me').json())
 
-
-logger.info("MAIN")
-main()
 
 if __name__ == "__main__":
     app.run()
