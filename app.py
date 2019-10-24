@@ -124,8 +124,8 @@ def set_webhook():
         return "webhook setup failed"
 
 
-@app.route('/test', methods=['GET', 'POST'])
-def test():
+@app.route('/auth', methods=['GET', 'POST'])
+def auth():
     if request.method == 'GET':
         return "setup ok"
     else:
