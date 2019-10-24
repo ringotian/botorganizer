@@ -58,23 +58,27 @@ def error(bot, update, error):
     logger.warn('Update "%s" caused error "%s"' % (update, error))
 
 
-# def google_auth_flow():
-#     scopes = ["https://www.googleapis.com/auth/calendar"]
-#     client_config_data = {
-#         "web": {
-#                 "client_id": os.environ.get('GOOGLE_CLIENT_ID'),
-#                 "project_id": os.environ.get('GOOGLE_PROJECT_ID'),
-#                 "auth_uri": os.environ.get('GOOGLE_AUTH_URI'),
-#                 "token_uri": os.environ.get('GOOGLE_TOKEN_URI'),
-#                 "auth_provider_x509_cert_url": os.environ.get('GOOGLE_AUTH_CERT_URI'),
-#                 "client_secret": os.environ.get('GOOGLE_CLIENT_SECRET')}}
-#     flow = Flow.from_client_config(
-#         client_config_data,
-#         scopes=scopes,
-#         redirect_uri=os.environ.get("GOOGLE_REDIRECT_URI"))   
+def google_auth_flow():
+    scopes = ["https://www.googleapis.com/auth/calendar"]
+    client_config_data = {
+        "web": {
+                "client_id": os.environ.get('GOOGLE_CLIENT_ID'),
+                "project_id": os.environ.get('GOOGLE_PROJECT_ID'),
+                "auth_uri": os.environ.get('GOOGLE_AUTH_URI'),
+                "token_uri": os.environ.get('GOOGLE_TOKEN_URI'),
+                "auth_provider_x509_cert_url": os.environ.get('GOOGLE_AUTH_CERT_URI'),
+                "client_secret": os.environ.get('GOOGLE_CLIENT_SECRET')}}
+    flow = Flow.from_client_config(
+        client_config_data,
+        scopes=scopes,
+        redirect_uri=os.environ.get("GOOGLE_REDIRECT_URI"))
+    auth_url, _ = flow.authorization_url(prompt='consent')
+    google_code = input('Введите код авторизации: ')
+    flow.fetch_token(code=google_code)
+    session = flow.authorized_session()
+    print(session.get('https://www.googleapis.com/userinfo/v2/me').json())
 
 
-#def setup_bot(token=TOKEN):
 bot = Bot(TOKEN)
 update_queue = Queue()
 
@@ -93,11 +97,6 @@ dp.add_error_handler(error)
 
 thread = Thread(target=dp.start, name='dp')
 thread.start()
-
-    #return update_queue
-
-
-#bot_update_queue = setup_bot(TOKEN)
 
 
 @app.route('/{}'.format(TOKEN), methods=['GET', 'POST'])
@@ -129,25 +128,10 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    # scopes = ["https://www.googleapis.com/auth/calendar"]
-    # client_config_data = {
-    #     "web": {
-    #             "client_id": os.environ.get('GOOGLE_CLIENT_ID'),
-    #             "project_id": os.environ.get('GOOGLE_PROJECT_ID'),
-    #             "auth_uri": os.environ.get('GOOGLE_AUTH_URI'),
-    #             "token_uri": os.environ.get('GOOGLE_TOKEN_URI'),
-    #             "auth_provider_x509_cert_url": os.environ.get('GOOGLE_AUTH_CERT_URI'),
-    #             "client_secret": os.environ.get('GOOGLE_CLIENT_SECRET')}}
-    # flow = Flow.from_client_config(
-    #     client_config_data,
-    #     scopes=scopes,
-    #     redirect_uri=os.environ.get("GOOGLE_REDIRECT_URI"))
-    # auth_url, _ = flow.authorization_url(prompt='consent')
-    # google_code = input('Введите код авторизации: ')
-    # flow.fetch_token(code=google_code)
-    # session = flow.authorized_session()
-    # print(session.get('https://www.googleapis.com/userinfo/v2/me').json())
-    return "We has been here"
+    if request.method = "GET":
+        return "We has been here"
+    else:
+        return "POST"
 
 
 if __name__ == "__main__":
