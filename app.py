@@ -127,6 +127,7 @@ def set_webhook():
 @app.route('/auth', methods=['GET', 'POST'])
 def auth():
     auth_url, _ = flow.authorization_url(prompt='consent')
+    print(auth_url)
     return redirect(auth_url)
 
 
