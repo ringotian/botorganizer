@@ -97,16 +97,6 @@ thread.start()
 flow = google_auth_flow()
 
 
-@app.route('/login/', methods=['GET', 'POST'])
-def login():
-    auth_url, _ = flow.authorization_url(prompt='consent')
-    #google_code = input('Введите код авторизации: ')
-    #flow.fetch_token(code=google_code)
-    #session = flow.authorized_session()
-    #return session.get('https://www.googleapis.com/userinfo/v2/me').json()
-    redirect(auth_url)
-
-
 @app.route('/{}'.format(TOKEN), methods=['GET', 'POST'])
 def webhook():
     if request.method == "POST":
@@ -134,5 +124,13 @@ def index():
     return redirect(TELEGRAM_BOT_URL, code=302)
 
 
-if __name__ == "__main__":
-    app.run()
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return "setup ok"
+    else:
+        return "setup failed"
+
+
+#if __name__ == "__main__":
+app.run()
