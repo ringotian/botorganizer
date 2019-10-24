@@ -128,7 +128,7 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method = "GET":
+    if request.method == "GET":
         return "We has been here"
     else:
         return "POST"
