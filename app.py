@@ -127,8 +127,14 @@ def set_webhook():
 @app.route('/auth', methods=['GET', 'POST'])
 def auth():
     auth_url, _ = flow.authorization_url(prompt='consent')
-    print(auth_url)
     return redirect(auth_url)
+
+
+@app.route('/gcallback', methods=['GET', 'POST'])
+def gcallback():
+    code = request.args.get("code")
+    print(code)
+    return code
 
 
 if __name__ == "__main__":
