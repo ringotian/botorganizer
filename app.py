@@ -130,7 +130,7 @@ def auth():
     return redirect(auth_url)
 
 
-@app.route('/gcallback', methods=['GET', 'POST'])
+@app.route('/login/gcallback', methods=['GET', 'POST'])
 def gcallback():
     code = request.args.get("code")
     print(code)
