@@ -29,7 +29,7 @@ def start(bot, update):
 
 
 def google_auth(bot, update):
-    auth_url = f"https://{os.environ.get('HEROKU_APP_NAME')}.herokuapp.com/auth/"
+    auth_url = f"https://{os.environ.get('HEROKU_APP_NAME')}.herokuapp.com/auth"
     keyboard = [
                 [InlineKeyboardButton('Нажми на ссылку, чтобы авторизоваться в гугле', url=auth_url)]
                 ]
