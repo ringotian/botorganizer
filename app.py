@@ -107,7 +107,7 @@ def webhook():
         update_queue.put(update)
         return "OK"
     else:
-        return redirect("https://t.me/testtesttesgooglecalendarbot", code=302)
+        return redirect("https://t.me/life_organizer_bot", code=302)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -124,8 +124,8 @@ def set_webhook():
         return "webhook setup failed"
 
 
-@app.route('/test', methods=['GET', 'POST'])
-def test():
+@app.route('/login', methods=['GET', 'POST'])
+def login():
     if request.method == 'GET':
         return "setup ok"
     else:
