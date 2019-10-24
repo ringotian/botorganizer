@@ -72,11 +72,7 @@ def google_auth_flow():
         client_config_data,
         scopes=scopes,
         redirect_uri=os.environ.get("GOOGLE_REDIRECT_URI"))
-    auth_url, _ = flow.authorization_url(prompt='consent')
-    google_code = input('Введите код авторизации: ')
-    flow.fetch_token(code=google_code)
-    session = flow.authorized_session()
-    print(session.get('https://www.googleapis.com/userinfo/v2/me').json())
+    return flow
 
 
 bot = Bot(TOKEN)
@@ -97,6 +93,8 @@ dp.add_error_handler(error)
 
 thread = Thread(target=dp.start, name='dp')
 thread.start()
+
+flow = google_auth_flow()
 
 
 @app.route('/{}'.format(TOKEN), methods=['GET', 'POST'])
@@ -128,10 +126,12 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == "GET":
-        return "We has been here"
-    else:
-        return "POST"
+    auth_url, _ = flow.authorization_url(prompt='consent')
+    #google_code = input('Введите код авторизации: ')
+    #flow.fetch_token(code=google_code)
+    #session = flow.authorized_session()
+    #return session.get('https://www.googleapis.com/userinfo/v2/me').json()
+    redirect(auth_url)
 
 
 if __name__ == "__main__":
