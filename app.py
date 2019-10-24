@@ -110,6 +110,11 @@ def webhook():
         return redirect("https://t.me/testtesttesgooglecalendarbot", code=302)
 
 
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    return redirect(TELEGRAM_BOT_URL, code=302)
+
+
 @app.route('/set_webhook', methods=['GET', 'POST'])
 def set_webhook():
     s = bot.set_webhook(f"{URL}{TOKEN}")
@@ -119,13 +124,8 @@ def set_webhook():
         return "webhook setup failed"
 
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    return redirect(TELEGRAM_BOT_URL, code=302)
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
+@app.route('/test', methods=['GET', 'POST'])
+def test():
     if request.method == 'GET':
         return "setup ok"
     else:
