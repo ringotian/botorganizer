@@ -243,11 +243,12 @@ def oauth2callback():
     # Specify the state when creating the flow in the callback so that it can
     # verified in the authorization server response.
     state = session['state']
+    print(state)
 
     flow = google_auth_oauthlib.flow.Flow.from_client_config(
          client_config_data,
          scopes=SCOPES,
-         redirect_uri=os.environ.get("DRIVE_REDIRECT_URI"),
+         # redirect_uri=os.environ.get("DRIVE_REDIRECT_URI"),
          state=state)
     flow.redirect_uri = url_for('oauth2callback', _external=True)
 
@@ -255,9 +256,9 @@ def oauth2callback():
     authorization_response = request.url
     flow.fetch_token(authorization_response=authorization_response)
 
-  # Store credentials in the session.
-  # ACTION ITEM: In a production app, you likely want to save these
-  #              credentials in a persistent database instead.
+    # Store credentials in the session.
+    # ACTION ITEM: In a production app, you likely want to save these
+    #              credentials in a persistent database instead.
     credentials = flow.credentials
     session['credentials'] = credentials_to_dict(credentials)
 
