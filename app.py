@@ -88,7 +88,7 @@ def oauth2callback():
         state = flask.session['state']
         print("STATE: ", flask.session['state'])
     else:
-        print("STATE NOT FOUND)
+        print("STATE NOT FOUND")
 
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
         CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
