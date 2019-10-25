@@ -23,6 +23,7 @@ URL = "https://{}.herokuapp.com/".format(os.environ.get('HEROKU_APP_NAME'))
 API_SERVICE_NAME = 'drive'
 API_VERSION = 'v2'
 SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly']
+
 client_config_data = {
          "web": {
                  "client_id": os.environ.get('DRIVE_CLIENT_ID'),
@@ -34,6 +35,7 @@ client_config_data = {
 
 app = Flask(__name__)
 logger.info("START")
+app.secret_key = os.urandom(24)
 
 
 def start(bot, update):
