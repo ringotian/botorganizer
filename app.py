@@ -1,5 +1,6 @@
 import logging
 import os
+import requests
 from queue import Queue
 from threading import Thread
 from telegram import Bot, Update, ReplyKeyboardMarkup, InlineKeyboardButton, \
@@ -109,7 +110,37 @@ dp.add_error_handler(error)
 thread = Thread(target=dp.start, name='dp')
 thread.start()
 
+
 # flow = google_auth_flow()
+def credentials_to_dict(credentials):
+    return {'token': credentials.token,
+          'refresh_token': credentials.refresh_token,
+          'token_uri': credentials.token_uri,
+          'client_id': credentials.client_id,
+          'client_secret': credentials.client_secret,
+          'scopes': credentials.scopes}
+
+
+def print_index_table():
+    return ('<table>' +
+          '<tr><td><a href="/test">Test an API request</a></td>' +
+          '<td>Submit an API request and see a formatted JSON response. ' +
+          '    Go through the authorization flow if there are no stored ' +
+          '    credentials for the user.</td></tr>' +
+          '<tr><td><a href="/authorize">Test the auth flow directly</a></td>' +
+          '<td>Go directly to the authorization flow. If there are stored ' +
+          '    credentials, you still might not be prompted to reauthorize ' +
+          '    the application.</td></tr>' +
+          '<tr><td><a href="/revoke">Revoke current credentials</a></td>' +
+          '<td>Revoke the access token associated with the current user ' +
+          '    session. After revoking credentials, if you go to the test ' +
+          '    page, you should see an <code>invalid_grant</code> error.' +
+          '</td></tr>' +
+          '<tr><td><a href="/clear">Clear Flask session credentials</a></td>' +
+          '<td>Clear the access token currently stored in the user session. ' +
+          '    After clearing the token, if you <a href="/test">test the ' +
+          '    API request</a> again, you should go back to the auth flow.' +
+          '</td></tr></table>')
 
 
 @app.route('/{}'.format(TOKEN), methods=['GET', 'POST'])
@@ -211,7 +242,7 @@ def oauth2callback():
          client_config_data,
          scopes=SCOPES,
          redirect_uri=os.environ.get("DRIVE_REDIRECT_URI"),
-         state=state))
+         state=state)
     flow.redirect_uri = url_for('oauth2callback', _external=True)
 
     # Use the authorization server's response to fetch the OAuth 2.0 tokens.
@@ -230,15 +261,14 @@ def oauth2callback():
 @app.route('/revoke')
 def revoke():
     if 'credentials' not in session:
-        return ('You need to <a href="/authorize">authorize</a> before ' +
-            'testing the code to revoke credentials.')
+        return ('You need to <a href="/authorize">authorize</a> before ' + 'testing the code to revoke credentials.')
 
     credentials = google.oauth2.credentials.Credentials(
                     **session['credentials'])
 
     revoke = requests.post('https://accounts.google.com/o/oauth2/revoke',
-      params={'token': credentials.token},
-      headers = {'content-type': 'application/x-www-form-urlencoded'})
+        params={'token': credentials.token},
+        headers={'content-type': 'application/x-www-form-urlencoded'})
 
     status_code = getattr(revoke, 'status_code')
     if status_code == 200:
@@ -246,41 +276,13 @@ def revoke():
     else:
         return('An error occurred.' + print_index_table())
 
+
 @app.route('/clear')
 def clear_credentials():
-  if 'credentials' in session:
-    del session['credentials']
-  return ('Credentials have been cleared.<br><br>' +
-          print_index_table())
+    if 'credentials' in session:
+        del session['credentials']
+        return ('Credentials have been cleared.<br><br>' + print_index_table())
 
-def credentials_to_dict(credentials):
-    return {'token': credentials.token,
-          'refresh_token': credentials.refresh_token,
-          'token_uri': credentials.token_uri,
-          'client_id': credentials.client_id,
-          'client_secret': credentials.client_secret,
-          'scopes': credentials.scopes}
-
-def print_index_table():
-  return ('<table>' +
-          '<tr><td><a href="/test">Test an API request</a></td>' +
-          '<td>Submit an API request and see a formatted JSON response. ' +
-          '    Go through the authorization flow if there are no stored ' +
-          '    credentials for the user.</td></tr>' +
-          '<tr><td><a href="/authorize">Test the auth flow directly</a></td>' +
-          '<td>Go directly to the authorization flow. If there are stored ' +
-          '    credentials, you still might not be prompted to reauthorize ' +
-          '    the application.</td></tr>' +
-          '<tr><td><a href="/revoke">Revoke current credentials</a></td>' +
-          '<td>Revoke the access token associated with the current user ' +
-          '    session. After revoking credentials, if you go to the test ' +
-          '    page, you should see an <code>invalid_grant</code> error.' +
-          '</td></tr>' +
-          '<tr><td><a href="/clear">Clear Flask session credentials</a></td>' +
-          '<td>Clear the access token currently stored in the user session. ' +
-          '    After clearing the token, if you <a href="/test">test the ' +
-          '    API request</a> again, you should go back to the auth flow.' +
-          '</td></tr></table>')
 
 if __name__ == "__main__":
     app.run()
