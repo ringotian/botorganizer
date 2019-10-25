@@ -14,9 +14,9 @@ CLIENT_SECRETS_FILE = "client_secret.json"
 
 # This OAuth 2.0 access scope allows for full read/write access to the
 # authenticated user's account and requires requests to use an SSL connection.
-SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly']
-API_SERVICE_NAME = 'drive'
-API_VERSION = 'v2'
+SCOPES = ['https://www.googleapis.com/auth/calendar']
+API_SERVICE_NAME = 'calendar'
+API_VERSION = 'v3'
 
 app = flask.Flask(__name__)
 # Note: A secret key is included in the sample so that it works.
@@ -39,18 +39,19 @@ def test_api_request():
     credentials = google.oauth2.credentials.Credentials(
         **flask.session['credentials'])
 
-    drive = googleapiclient.discovery.build(
+    calendar = googleapiclient.discovery.build(
         API_SERVICE_NAME, API_VERSION, credentials=credentials)
 
-    files = drive.files().list().execute()
+    #files = drive.files().list().execute()
 
     # Save credentials back to session in case access token was refreshed.
     # ACTION ITEM: In a production app, you likely want to save these
     #              credentials in a persistent database instead.
     flask.session['credentials'] = credentials_to_dict(credentials)
 
-    return flask.jsonify(**files)
-
+    #return flask.jsonify(**files)
+    print(calendar)
+    return "OK"
 
 @app.route('/authorize')
 def authorize():
