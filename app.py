@@ -191,6 +191,8 @@ def set_webhook():
 def test_api_request():
     if 'credentials' not in session:
         return redirect('authorize')
+    else:
+        return session['credentials']
 
     # Load credentials from the session.
     credentials = google.oauth2.credentials.Credentials(
@@ -213,7 +215,8 @@ def authorize():
     flow = google_auth_oauthlib.flow.Flow.from_client_config(
          client_config_data,
          scopes=SCOPES,
-         redirect_uri=os.environ.get("DRIVE_REDIRECT_URI"))
+         #redirect_uri=os.environ.get("DRIVE_REDIRECT_URI")
+          )
 
     # The URI created here must exactly match one of the authorized redirect URIs   
     # for the OAuth 2.0 client, which you configured in the API Console. If this
@@ -230,6 +233,7 @@ def authorize():
 
     # Store the state so the callback can verify the auth server response.
     session['state'] = state
+    print(session['state'])
 
     return redirect(authorization_url)
 
