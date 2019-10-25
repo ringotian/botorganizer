@@ -249,7 +249,8 @@ def oauth2callback():
          client_config_data,
          scopes=SCOPES,
          # redirect_uri=os.environ.get("DRIVE_REDIRECT_URI"),
-         state=state)
+         #state=state
+         )
     flow.redirect_uri = url_for('oauth2callback', _external=True)
 
     # Use the authorization server's response to fetch the OAuth 2.0 tokens.
