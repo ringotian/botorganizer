@@ -72,7 +72,9 @@ def authorize():
     include_granted_scopes='true')
 
     # Store the state so the callback can verify the auth server response.
+    print("WOW STATE IS HERE: ", state)
     flask.session['state'] = state
+    print("AND FROM FLASK SESSION: ", flask.session['state'])
 
     return flask.redirect(authorization_url)
 
