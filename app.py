@@ -76,8 +76,8 @@ def authorize():
     flask.session['state'] = state
     print("AND FROM FLASK SESSION: ", flask.session['state'])
 
-    return flask.session['state']
-    #return flask.redirect(authorization_url)
+    #return flask.session['state']
+    return flask.redirect(authorization_url)
 
 
 @app.route('/oauth2callback')
