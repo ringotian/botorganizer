@@ -83,6 +83,7 @@ def authorize():
 def oauth2callback():
     # Specify the state when creating the flow in the callback so that it can
     # verified in the authorization server response.
+    print(flask.session)
     state = flask.session['state']
     print("STATE AFTER: ", state)
 
