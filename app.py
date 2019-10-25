@@ -3,7 +3,7 @@
 import os
 import flask
 import requests
-
+import datetime
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
@@ -22,7 +22,7 @@ app = flask.Flask(__name__)
 # Note: A secret key is included in the sample so that it works.
 # If you use this code in your application, replace this with a truly secret
 # key. See http://flask.pocoo.org/docs/0.12/quickstart/#sessions.
-app.secret_key = 'supersecret'
+app.secret_key = os.environ.get('FLASK_SESSION_KEY')
 
 
 @app.route('/')
@@ -42,7 +42,19 @@ def test_api_request():
     calendar = googleapiclient.discovery.build(
         API_SERVICE_NAME, API_VERSION, credentials=credentials)
 
-    #files = drive.files().list().execute()
+    now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
+    print('Getting the upcoming 10 events')
+    events_result = calendar.events().list(calendarId='primary', timeMin=now,
+                                        maxResults=10, singleEvents=True,
+                                        orderBy='startTime').execute()
+    events = events_result.get('items', [])
+
+    if not events:
+        print('No upcoming events found.')
+    for event in events:
+        start = event['start'].get('dateTime', event['start'].get('date'))
+        print(start, event['summary'])
+
 
     # Save credentials back to session in case access token was refreshed.
     # ACTION ITEM: In a production app, you likely want to save these
@@ -51,7 +63,7 @@ def test_api_request():
 
     #return flask.jsonify(**files)
     print(calendar)
-    return "OK"
+    return 'events'
 
 @app.route('/authorize')
 def authorize():
