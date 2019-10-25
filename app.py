@@ -82,6 +82,7 @@ def oauth2callback():
     # Specify the state when creating the flow in the callback so that it can
     # verified in the authorization server response.
     state = flask.session['state']
+    print("STATE AFTER: ", state)
 
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
         CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
@@ -167,4 +168,3 @@ if __name__ == '__main__':
     # Specify a hostname and port that are set as a valid redirect URI
     # for your API project in the Google API Console.
     app.run(debug=True)
-    
