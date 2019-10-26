@@ -38,6 +38,7 @@ def test_api_request():
     # Load credentials from the session.
     credentials = google.oauth2.credentials.Credentials(
         **flask.session['credentials'])
+    print("CREDS: ", credentials)
 
     calendar = googleapiclient.discovery.build(
         API_SERVICE_NAME, API_VERSION, credentials=credentials)
