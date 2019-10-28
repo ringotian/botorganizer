@@ -83,7 +83,7 @@ def is_not_authorized():
         return False
 
 
-def start(bot, update):
+def start(update, context):
     text = 'Привет! Что ты хочешь сделать?'
     my_keyboard = ReplyKeyboardMarkup([
                                     ['Посмотреть расписание'], ['Создать мероприятие']]
@@ -91,7 +91,7 @@ def start(bot, update):
     update.message.reply_text(text, reply_markup=my_keyboard)
 
 
-def google_auth(bot, update):
+def google_auth(update, context):
     auth_url = f"https://{os.environ.get('HEROKU_APP_NAME')}.herokuapp.com/authorize"
     keyboard = [
                 [InlineKeyboardButton('Нажми на ссылку, чтобы авторизоваться в гугле', url=auth_url)]
@@ -105,7 +105,7 @@ def help(update, context):
     update.message.reply_text(text)
 
 
-def check_agenda(bot, update, user_data):
+def check_agenda(update, context):
     check_user_creds = is_not_authorized()
     if check_user_creds is False:
         text = "Сначала нужно авторизоваться в гугле. \
