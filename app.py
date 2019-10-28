@@ -40,8 +40,7 @@ CLIENT_SECRETS_FILE = "client_secret.json"
 app = flask.Flask(__name__)
 app.config['MONGO_URI'] = os.environ.get('MONGODB_URI')+'?retryWrites=false'
 mongo = PyMongo(app)
-mongo_db = mongo.get_default_database()
-google_credentials = mongo_db['google_credentials']
+google_credentials = mongo.db['google_credentials']
 app.secret_key = os.environ.get('FLASK_SESSION_KEY')
 bot = Bot(TOKEN)
 update_queue = Queue()
