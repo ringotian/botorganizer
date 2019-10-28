@@ -230,7 +230,7 @@ def oauth2callback():
     credentials = flow.credentials
     #flask.session['credentials'] = credentials_to_dict(credentials)
     #user_creds = credentials_to_dict(credentials)
-    mongo.db.google_credentials.insertOne(
+    mongo.db.google_credentials.insert_one(
         {
             '_id': flask.session['user_id'],
             'token': credentials.token,
