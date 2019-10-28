@@ -116,7 +116,7 @@ def check_agenda(update, context):
         update.message.reply_text(text)
 
 
-def error(bot, update, error):
+def error(update, context, error):
     logger.warn('Update "%s" caused error "%s"' % (update, error))
 
 
