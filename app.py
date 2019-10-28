@@ -11,6 +11,7 @@ from threading import Thread
 from telegram import Bot, Update, ReplyKeyboardMarkup, InlineKeyboardButton, \
                     InlineKeyboardMarkup
 from telegram.ext import Dispatcher, CommandHandler, RegexHandler
+import oauth2client
 
 logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO,
