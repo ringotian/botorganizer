@@ -103,7 +103,9 @@ def help(bot, update):
 
 
 def check_agenda(bot, update, user_data):
-    if is_not_authorized() is False:
+    check_user_creds = is_not_authorized()
+    print("SEE HERE:", check_user_creds)
+    if check_user_creds is False:
         text = "Сначала нужно авторизоваться в гугле. \
             Для этого используй команду /google_auth"
     else:
