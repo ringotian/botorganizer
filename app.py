@@ -140,7 +140,6 @@ def test_api_request():
     # Load credentials from the session.
     credentials = google.oauth2.credentials.Credentials(
         **flask.session['credentials'])
-    print("CREDS: ", credentials)
 
     calendar = googleapiclient.discovery.build(
         API_SERVICE_NAME, API_VERSION, credentials=credentials)
@@ -163,17 +162,15 @@ def test_api_request():
     # ACTION ITEM: In a production app, you likely want to save these
     #              credentials in a persistent database instead.
     flask.session['credentials'] = credentials_to_dict(credentials)
-    print(credentials_to_dict(credentials))
     #return flask.jsonify(**files)
-    print(calendar)
     return 'events'
 
 
 @app.route('/authorize')
 def authorize():
     # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
-    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-        CLIENT_SECRETS_FILE, scopes=SCOPES)
+    flow = google_auth_oauthlib.flow.Flow.from_client_config(
+        CLIENT_CONFIG_DATA, scopes=SCOPES)
 
     # The URI created here must exactly match one of the authorized redirect URIs
     # for the OAuth 2.0 client, which you configured in the API Console. If this
@@ -203,8 +200,8 @@ def oauth2callback():
     if 'state' in flask.session:
         state = flask.session['state']
         print("STATE: ", flask.session['state'])
-    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-        CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
+    flow = google_auth_oauthlib.flow.Flow.from_client_config(
+        CLIENT_CONFIG_DATA, scopes=SCOPES, state=state)
     flow.redirect_uri = flask.url_for('oauth2callback', _external=True)
 
     # Use the authorization server's response to fetch the OAuth 2.0 tokens.
