@@ -92,8 +92,7 @@ def start(update, context):
 
 
 def google_auth(update, context):
-    print(update.message.chat_id)
-    auth_url = f"https://{os.environ.get('HEROKU_APP_NAME')}.herokuapp.com/authorize/"
+    auth_url = f"https://{os.environ.get('HEROKU_APP_NAME')}.herokuapp.com/authorize/{update.message.chat_id}"
     keyboard = [
                 [InlineKeyboardButton('Нажми на ссылку, чтобы авторизоваться в гугле', url=auth_url)]
                 ]
@@ -203,6 +202,7 @@ def authorize(userid):
 
     # Store the state so the callback can verify the auth server response.
     flask.session['state'] = state
+    flask.session['user_id'] = userid
     #mongo.google_credentials.
     #return flask.session['state']
     return flask.redirect(authorization_url)
@@ -227,7 +227,19 @@ def oauth2callback():
     # ACTION ITEM: In a production app, you likely want to save these
     #              credentials in a persistent database instead.
     credentials = flow.credentials
-    flask.session['credentials'] = credentials_to_dict(credentials)
+    #flask.session['credentials'] = credentials_to_dict(credentials)
+    #user_creds = credentials_to_dict(credentials)
+    mongo.google_credentials.insertOne(
+        {
+            '_id': flask.session['user_id'],
+            'token': credentials.token,
+            'refresh_token': credentials.refresh_token,
+            'token_uri': credentials.token_uri,
+            'client_id': credentials.client_id,
+            'client_secret': credentials.client_secret,
+            'scopes': credentials.scopes,
+        }
+        )
     return flask.redirect(flask.url_for('test_api_request'))
 
 
