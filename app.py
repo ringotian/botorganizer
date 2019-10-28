@@ -116,8 +116,8 @@ def check_agenda(update, context):
         update.message.reply_text(text)
 
 
-def error(update, context, error):
-    logger.warn('Update "%s" caused error "%s"' % (update, error))
+def error(update, context):
+    logger.warning('Update "%s" caused error "%s"', update, context.error)
 
 
 dp.add_handler(CommandHandler("start", start))
