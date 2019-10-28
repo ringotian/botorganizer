@@ -10,7 +10,7 @@ from queue import Queue
 from threading import Thread
 from telegram import Bot, Update, ReplyKeyboardMarkup, InlineKeyboardButton, \
                     InlineKeyboardMarkup
-from telegram.ext import Dispatcher, CommandHandler, RegexHandler, Filters
+from telegram.ext import Dispatcher, CommandHandler, Filters, MessageHandler
 from flask_pymongo import PyMongo
 
 logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
@@ -123,7 +123,7 @@ def error(bot, update, error):
 dp.add_handler(CommandHandler("start", start))
 dp.add_handler(MessageHandler(
     Filters.regex('^(Посмотреть расписание)$'), check_agenda
-    )
+    ))
 dp.add_handler(CommandHandler("help", help))
 dp.add_handler(CommandHandler('google_auth', google_auth))
 dp.add_error_handler(error)
