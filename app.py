@@ -43,16 +43,6 @@ update_queue = Queue()
 dp = Dispatcher(bot, update_queue)
 
 
-def credentials_to_dict(credentials):
-    return {'token': credentials.token,
-            'refresh_token': credentials.refresh_token,
-            'token_uri': credentials.token_uri,
-            'client_id': credentials.client_id,
-            'client_secret': credentials.client_secret,
-            'scopes': credentials.scopes,
-            }
-
-
 def print_index_table():
     return ('<table>' +
           '<tr><td><a href="/test">Test an API request</a></td>' +
@@ -75,6 +65,21 @@ def print_index_table():
           '</td></tr></table>')
 
 
+def credentials_to_dict(credentials):
+    return {'token': credentials.token,
+            'refresh_token': credentials.refresh_token,
+            'token_uri': credentials.token_uri,
+            'client_id': credentials.client_id,
+            'client_secret': credentials.client_secret,
+            'scopes': credentials.scopes,
+            }
+
+
+def is_not_authorized():
+    if 'credentials' not in flask.session:
+        return False
+
+
 def start(bot, update):
     text = 'Привет! Что ты хочешь сделать?'
     my_keyboard = ReplyKeyboardMarkup([
@@ -84,7 +89,7 @@ def start(bot, update):
 
 
 def google_auth(bot, update):
-    auth_url = f"https://{os.environ.get('HEROKU_APP_NAME')}.herokuapp.com/auth"
+    auth_url = f"https://{os.environ.get('HEROKU_APP_NAME')}.herokuapp.com/authorize"
     keyboard = [
                 [InlineKeyboardButton('Нажми на ссылку, чтобы авторизоваться в гугле', url=auth_url)]
                 ]
@@ -98,8 +103,12 @@ def help(bot, update):
 
 
 def check_agenda(bot, update, user_data):
-    text = "Вот твое расписание на сегодня"
-    update.message.reply_text(text)
+    if is_not_authorized() is False:
+        text = "Сначала нужно авторизоваться в гугле. \
+            Для этого используй команду /google_auth"
+    else:
+        text = "Вот твое расписание на сегодня"
+        update.message.reply_text(text)
 
 
 def error(bot, update, error):
