@@ -194,6 +194,7 @@ def authorize():
     #return flask.session['state']
     return flask.redirect(authorization_url)
 
+
 @app.route('/oauth2callback')
 def oauth2callback():
     # Specify the state when creating the flow in the callback so that it can
@@ -214,7 +215,7 @@ def oauth2callback():
     #              credentials in a persistent database instead.
     credentials = flow.credentials
     flask.session['credentials'] = credentials_to_dict(credentials)
-
+    print("CHECK ME: ", flask.session['credentials'])
     return flask.redirect(flask.url_for('test_api_request'))
 
 
