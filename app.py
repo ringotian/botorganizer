@@ -93,7 +93,7 @@ def start(update, context):
 
 def google_auth(update, context):
     print(context.user_data)
-    print(update.chat_id)
+    print(update.chat.id)
     auth_url = f"https://{os.environ.get('HEROKU_APP_NAME')}.herokuapp.com/authorize/"
     keyboard = [
                 [InlineKeyboardButton('Нажми на ссылку, чтобы авторизоваться в гугле', url=auth_url)]
