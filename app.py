@@ -10,8 +10,8 @@ from queue import Queue
 from threading import Thread
 from telegram import Bot, Update, ReplyKeyboardMarkup, InlineKeyboardButton, \
                     InlineKeyboardMarkup
-from telegram.ext import Dispatcher, CommandHandler, RegexHandler
-import oauth2client
+from telegram.ext import Dispatcher, CommandHandler, RegexHandler, Filters
+from flask_pymongo import PyMongo
 
 logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO,
@@ -32,11 +32,14 @@ CLIENT_CONFIG_DATA = {
             "project_id": os.environ.get('GOOGLE_PROJECT_ID'),
             "auth_uri": os.environ.get('GOOGLE_AUTH_URI'),
             "token_uri": os.environ.get('GOOGLE_TOKEN_URI'),
-            "auth_provider_x509_cert_url": os.environ.get('GOOGLE_AUTH_CERT_URI'),
+            "auth_provider_x509_cert_url":
+            os.environ.get('GOOGLE_AUTH_CERT_URI'),
             "client_secret": os.environ.get('GOOGLE_CLIENT_SECRET')}
         }
 CLIENT_SECRETS_FILE = "client_secret.json"
 app = flask.Flask(__name__)
+app.config['MONGO_URI'] = os.environ.get('MONGODB_URI')+'?retryWrites=false'
+mongo = PyMongo(app)
 app.secret_key = os.environ.get('FLASK_SESSION_KEY')
 bot = Bot(TOKEN)
 update_queue = Queue()
@@ -97,7 +100,7 @@ def google_auth(bot, update):
     update.message.reply_text('Авторизоваться в google', reply_markup=reply_markup)
 
 
-def help(bot, update):
+def help(update, context):
     text = "Чтобы начать использование бота, введите /start"
     update.message.reply_text(text)
 
@@ -118,11 +121,9 @@ def error(bot, update, error):
 
 
 dp.add_handler(CommandHandler("start", start))
-dp.add_handler(
-                RegexHandler('^(Посмотреть расписание)$', 
-                check_agenda, 
-                pass_user_data=True)
-            )
+dp.add_handler(MessageHandler(
+    Filters.regex('^(Посмотреть расписание)$'), check_agenda
+    )
 dp.add_handler(CommandHandler("help", help))
 dp.add_handler(CommandHandler('google_auth', google_auth))
 dp.add_error_handler(error)
@@ -179,11 +180,12 @@ def test_api_request():
     return 'events'
 
 
-@app.route('/authorize')
-def authorize():
+@app.route('/authorize/<userid>')
+def authorize(userid):
     # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
     flow = google_auth_oauthlib.flow.Flow.from_client_config(
-        CLIENT_CONFIG_DATA, scopes=SCOPES)
+        CLIENT_CONFIG_DATA, scopes=SCOPES
+        )
 
     # The URI created here must exactly match one of the authorized redirect URIs
     # for the OAuth 2.0 client, which you configured in the API Console. If this
@@ -199,10 +201,8 @@ def authorize():
     include_granted_scopes='true')
 
     # Store the state so the callback can verify the auth server response.
-    print("WOW STATE IS HERE: ", state)
     flask.session['state'] = state
-    print("AND FROM FLASK SESSION: ", flask.session['state'])
-
+    #mongo.google_credentials.
     #return flask.session['state']
     return flask.redirect(authorization_url)
 
@@ -227,7 +227,6 @@ def oauth2callback():
     #              credentials in a persistent database instead.
     credentials = flow.credentials
     flask.session['credentials'] = credentials_to_dict(credentials)
-    print("CHECK ME: ", flask.session['credentials'])
     return flask.redirect(flask.url_for('test_api_request'))
 
 
