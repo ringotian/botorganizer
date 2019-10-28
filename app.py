@@ -10,8 +10,7 @@ from queue import Queue
 from threading import Thread
 from telegram import Bot, Update, ReplyKeyboardMarkup, InlineKeyboardButton, \
                     InlineKeyboardMarkup
-from telegram.ext import Dispatcher, CommandHandler, MessageHandler, Filters, \
-                        RegexHandler
+from telegram.ext import Dispatcher, CommandHandler, RegexHandler
 
 logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO,
@@ -164,7 +163,7 @@ def test_api_request():
     # ACTION ITEM: In a production app, you likely want to save these
     #              credentials in a persistent database instead.
     flask.session['credentials'] = credentials_to_dict(credentials)
-
+    print(credentials_to_dict(credentials))
     #return flask.jsonify(**files)
     print(calendar)
     return 'events'
