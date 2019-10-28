@@ -43,7 +43,7 @@ mongo = PyMongo(app)
 app.secret_key = os.environ.get('FLASK_SESSION_KEY')
 bot = Bot(TOKEN)
 update_queue = Queue()
-dp = Dispatcher(bot, update_queue)
+dp = Dispatcher(bot, update_queue, use_context=True)
 
 
 def print_index_table():
