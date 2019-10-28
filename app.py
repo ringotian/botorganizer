@@ -150,6 +150,7 @@ def test_api_request():
     events_result = calendar.events().list(calendarId='primary', timeMin=now,
                                         maxResults=10, singleEvents=True,
                                         orderBy='startTime').execute()
+    print("events_result", events_result)
     events = events_result.get('items', [])
 
     if not events:
