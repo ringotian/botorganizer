@@ -76,12 +76,18 @@ def start(update, context):
 
 
 def google_auth(update, context):
-    auth_url = f"https://{os.environ.get('HEROKU_APP_NAME')}.herokuapp.com/authorize/{update.message.chat_id}"
-    keyboard = [
-                [InlineKeyboardButton('Нажми на ссылку, чтобы авторизоваться в гугле', url=auth_url)]
-                ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    update.message.reply_text('Авторизоваться в google', reply_markup=reply_markup)
+    user_auth_check = is_authorized(update.message.chat_id)
+    if user_auth_check is True:
+        text = "Ты уже авторизована. Если хочешь отозвать авторизацию, \
+            используй /google_revoke"
+        update.message.reply_text(text)
+    else:
+        auth_url = f"https://{os.environ.get('HEROKU_APP_NAME')}.herokuapp.com/authorize/{update.message.chat_id}"
+        keyboard = [
+                    [InlineKeyboardButton('Нажми на ссылку, чтобы авторизоваться в гугле', url=auth_url)]
+                    ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        update.message.reply_text('Авторизоваться в google', reply_markup=reply_markup)
 
 
 def help(update, context):
@@ -261,8 +267,8 @@ def oauth2callback():
     #user_creds = credentials_to_dict(credentials)
     mongo.db.google_credentials.insert_one(
         {
-            '_id': ObjectId(),
-            'telegram_user_id': flask.session['user_id'],
+            '_id': flask.session['user_id'],
+            # 'telegram_user_id': flask.session['user_id'],
             'token': credentials.token,
             'refresh_token': credentials.refresh_token,
             'token_uri': credentials.token_uri,
