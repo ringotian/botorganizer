@@ -12,7 +12,6 @@ from telegram import Bot, Update, ReplyKeyboardMarkup, InlineKeyboardButton, \
                     InlineKeyboardMarkup
 from telegram.ext import Dispatcher, CommandHandler, Filters, MessageHandler
 from flask_pymongo import PyMongo
-from bson.objectid import ObjectId
 
 logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO,
@@ -131,7 +130,7 @@ def check_agenda(update, context):
     user_auth_check = is_authorized(update.message.chat_id)
     if user_auth_check is False:
         text = "Сначала нужно авторизоваться в гугле. \
-             Для этого используй команду /google_auth"
+            Для этого используй команду /google_auth"
         update.message.reply_text(text)
     else:
         # Load credentials
@@ -160,6 +159,44 @@ def check_agenda(update, context):
         update.message.reply_text(text)
 
 
+def add_event(update, context):
+    user_auth_check = is_authorized(update.message.chat_id)
+    if user_auth_check is False:
+        text = "Сначала нужно авторизоваться в гугле. \
+            Для этого используй команду /google_auth"
+        update.message.reply_text(text)
+    else:
+        # Load credentials
+        user_credentials_from_db = mongo.db.google_credentials.find_one(
+            {'_id': str(update.message.chat_id)}
+            )
+        user_credentials_dict = credentials_to_dict(user_credentials_from_db)
+        credentials = google.oauth2.credentials.Credentials(
+            **user_credentials_dict)
+        calendar = googleapiclient.discovery.build(
+            API_SERVICE_NAME, API_VERSION, credentials=credentials)
+
+        # Create data for event
+        current_date = datetime.datetime.now().date()
+        tomorrow = datetime.datetime(current_date.year, current_date.month, current_date.day, 10) + datetime.timedelta(days=1)
+        event_start = tomorrow.isoformat()
+        event_end = (tomorrow + datetime.timedelta(hours=1)).isoformat()
+
+        event_result = calendar.events().insert(calendarId='primary',
+                        body={
+                            "summary": 'Test event created by telegram bot',
+                            "description": "This is the test event",
+                            "start": {"dateTime": event_start, "timeZone": 'Russia/Moscow'},
+                            "end": {"dateTime": event_end, "timeZone": 'Russia/Moscow'},
+                        }).execute()
+        print("created event")
+        print("id: ", event_result['id'])
+        print("summary: ", event_result['summary'])
+        print("starts at: ", event_result['start']['dateTime'])
+        print("ends at: ", event_result['end']['dateTime'])
+        update.message.reply_text('Событие создано')
+
+
 def error(update, context):
     logger.warning('Update "%s" caused error "%s"', update, context.error)
 
@@ -167,6 +204,9 @@ def error(update, context):
 dp.add_handler(CommandHandler("start", start))
 dp.add_handler(MessageHandler(
     Filters.regex('^(Посмотреть расписание)$'), check_agenda
+    ))
+dp.add_handler(MessageHandler(
+    Filters.regex('^(Создать мероприятие)$'), add_event
     ))
 dp.add_handler(CommandHandler("help", help))
 dp.add_handler(CommandHandler('google_auth', google_auth))
@@ -192,40 +232,6 @@ def index():
     return flask.redirect(TELEGRAM_BOT_URL)
 
 
-# @app.route('/test')
-# def test_api_request():
-#     if 'credentials' not in flask.session:
-#         return flask.redirect('authorize')
-
-#     # Load credentials from the session.
-#     credentials = google.oauth2.credentials.Credentials(
-#         **flask.session['credentials'])
-
-#     calendar = googleapiclient.discovery.build(
-#         API_SERVICE_NAME, API_VERSION, credentials=credentials)
-
-#     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
-#     print('Getting the upcoming 10 events')
-#     events_result = calendar.events().list(calendarId='primary', timeMin=now,
-#                                         maxResults=10, singleEvents=True,
-#                                         orderBy='startTime').execute()
-#     print("events_result", events_result)
-#     events = events_result.get('items', [])
-
-#     if not events:
-#         print('No upcoming events found.')
-#     for event in events:
-#         start = event['start'].get('dateTime', event['start'].get('date'))
-#         print(start, event['summary'])
-
-#     # Save credentials back to session in case access token was refreshed.
-#     # ACTION ITEM: In a production app, you likely want to save these
-#     #              credentials in a persistent database instead.
-#     #flask.session['credentials'] = credentials_to_dict(credentials)
-#     #return flask.jsonify(**files)
-#     return 'events'
-
-
 @app.route('/authorize/<userid>')
 def authorize(userid):
     # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
@@ -249,8 +255,6 @@ def authorize(userid):
     # Store the state so the callback can verify the auth server response.
     flask.session['state'] = state
     flask.session['user_id'] = userid
-    #mongo.google_credentials.
-    #return flask.session['state']
     return flask.redirect(authorization_url)
 
 
