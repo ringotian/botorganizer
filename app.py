@@ -163,6 +163,7 @@ def check_agenda(update, context):
             text = 'У вас нет предстоящих событий в календаре'
         for event in events:
             start = event['start'].get('dateTime', event['start'].get('date'))
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", start)
             text = text + start + ' ' + event['summary'] + '\n'
         update.message.reply_text(f'События из календаря {calendar_name}\n{text}')
 
