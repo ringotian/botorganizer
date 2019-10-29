@@ -249,9 +249,9 @@ def button(update, context):
     #             {'_id': str(update.callback_query.message.chat_id)},
     #             {'$set': {'default_calendar': calendar_id}}
     #     )
-    query.edit_message_text(
-        text="Календарь {} установлен по умолчанию".format(calendar_name)
-        )
+    # query.edit_message_text(
+    #     text="Календарь {} установлен по умолчанию".format(calendar_name)
+    #     )
 
 
 def error(update, context):
