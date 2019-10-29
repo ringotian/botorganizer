@@ -164,7 +164,7 @@ def check_agenda(update, context):
         for event in events:
             start = event['start'].get('dateTime', event['start'].get('date'))
             text = text + start + ' ' + event['summary'] + '\n'
-        update.message.reply_text(f'События из календаря {calendar_name}\ntext')
+        update.message.reply_text(f'События из календаря {calendar_name}\n{text}')
 
 
 def add_event(update, context):
