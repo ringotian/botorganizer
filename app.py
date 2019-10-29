@@ -71,7 +71,8 @@ def is_authorized(user_id):
 def start(update, context):
     text = 'Привет! Что ты хочешь сделать?'
     my_keyboard = ReplyKeyboardMarkup([
-                                    ['Посмотреть расписание'], ['Создать мероприятие']]
+                                    ['Посмотреть расписание'], ['Создать мероприятие']],
+                                    resize_keyboard=True
                                     )
     update.message.reply_text(text, reply_markup=my_keyboard)
 
