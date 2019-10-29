@@ -12,6 +12,7 @@ from telegram import Bot, Update, ReplyKeyboardMarkup, InlineKeyboardButton, \
                     InlineKeyboardMarkup
 from telegram.ext import Dispatcher, CommandHandler, Filters, MessageHandler
 from flask_pymongo import PyMongo
+from bson.objectid import ObjectId
 
 logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO,
@@ -79,9 +80,10 @@ def credentials_to_dict(credentials):
             }
 
 
-def is_not_authorized():
-    if 'credentials' not in flask.session:
-        return False
+def is_authorized(user_id):
+    user_creds = mongo.db.google_credentials.find_one({'_id': ObjectId(user_id)})
+    print(user_creds)
+
 
 
 def start(update, context):
@@ -107,15 +109,46 @@ def help(update, context):
 
 
 def check_agenda(update, context):
-    check_user_creds = is_not_authorized()
-    if check_user_creds is False:
-        text = "Сначала нужно авторизоваться в гугле. \
-            Для этого используй команду /google_auth"
-        update.message.reply_text(text)
-    else:
-        text = "Вот твое расписание на сегодня"
-        update.message.reply_text(text)
+    print(update.user_id)
+    is_authorized(update.user_id)
 
+    # if check_user_creds is False:
+    #     text = "Сначала нужно авторизоваться в гугле. \
+    #         Для этого используй команду /google_auth"
+    #     update.message.reply_text(text)
+    # else:
+    #     text = "Вот твое расписание на сегодня"
+    #     update.message.reply_text(text)
+    # if 'credentials' not in flask.session:
+    #     return flask.redirect('authorize')
+
+    # # Load credentials from the session.
+    # credentials = google.oauth2.credentials.Credentials(
+    #     **flask.session['credentials'])
+
+    # calendar = googleapiclient.discovery.build(
+    #     API_SERVICE_NAME, API_VERSION, credentials=credentials)
+
+    # now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
+    # print('Getting the upcoming 10 events')
+    # events_result = calendar.events().list(calendarId='primary', timeMin=now,
+    #                                     maxResults=10, singleEvents=True,
+    #                                     orderBy='startTime').execute()
+    # print("events_result", events_result)
+    # events = events_result.get('items', [])
+
+    # if not events:
+    #     print('No upcoming events found.')
+    # for event in events:
+    #     start = event['start'].get('dateTime', event['start'].get('date'))
+    #     print(start, event['summary'])
+
+    # # Save credentials back to session in case access token was refreshed.
+    # # ACTION ITEM: In a production app, you likely want to save these
+    # #              credentials in a persistent database instead.
+    # #flask.session['credentials'] = credentials_to_dict(credentials)
+    # #return flask.jsonify(**files)
+    # return 'events'
 
 def error(update, context):
     logger.warning('Update "%s" caused error "%s"', update, context.error)
@@ -147,38 +180,38 @@ def index():
     return print_index_table()
 
 
-@app.route('/test')
-def test_api_request():
-    if 'credentials' not in flask.session:
-        return flask.redirect('authorize')
+# @app.route('/test')
+# def test_api_request():
+#     if 'credentials' not in flask.session:
+#         return flask.redirect('authorize')
 
-    # Load credentials from the session.
-    credentials = google.oauth2.credentials.Credentials(
-        **flask.session['credentials'])
+#     # Load credentials from the session.
+#     credentials = google.oauth2.credentials.Credentials(
+#         **flask.session['credentials'])
 
-    calendar = googleapiclient.discovery.build(
-        API_SERVICE_NAME, API_VERSION, credentials=credentials)
+#     calendar = googleapiclient.discovery.build(
+#         API_SERVICE_NAME, API_VERSION, credentials=credentials)
 
-    now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
-    print('Getting the upcoming 10 events')
-    events_result = calendar.events().list(calendarId='primary', timeMin=now,
-                                        maxResults=10, singleEvents=True,
-                                        orderBy='startTime').execute()
-    print("events_result", events_result)
-    events = events_result.get('items', [])
+#     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
+#     print('Getting the upcoming 10 events')
+#     events_result = calendar.events().list(calendarId='primary', timeMin=now,
+#                                         maxResults=10, singleEvents=True,
+#                                         orderBy='startTime').execute()
+#     print("events_result", events_result)
+#     events = events_result.get('items', [])
 
-    if not events:
-        print('No upcoming events found.')
-    for event in events:
-        start = event['start'].get('dateTime', event['start'].get('date'))
-        print(start, event['summary'])
+#     if not events:
+#         print('No upcoming events found.')
+#     for event in events:
+#         start = event['start'].get('dateTime', event['start'].get('date'))
+#         print(start, event['summary'])
 
-    # Save credentials back to session in case access token was refreshed.
-    # ACTION ITEM: In a production app, you likely want to save these
-    #              credentials in a persistent database instead.
-    flask.session['credentials'] = credentials_to_dict(credentials)
-    #return flask.jsonify(**files)
-    return 'events'
+#     # Save credentials back to session in case access token was refreshed.
+#     # ACTION ITEM: In a production app, you likely want to save these
+#     #              credentials in a persistent database instead.
+#     #flask.session['credentials'] = credentials_to_dict(credentials)
+#     #return flask.jsonify(**files)
+#     return 'events'
 
 
 @app.route('/authorize/<userid>')
@@ -241,7 +274,7 @@ def oauth2callback():
             'scopes': credentials.scopes,
         }
         )
-    return flask.redirect(flask.url_for('test_api_request'))
+    return flask.redirect(flask.url_for('index'))
 
 
 @app.route('/revoke')
