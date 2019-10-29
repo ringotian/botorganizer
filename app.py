@@ -83,8 +83,8 @@ def credentials_to_dict(credentials):
 def is_authorized(user_id):
     print("ID: ", user_id)
     user_str_id = str(user_id)
-    # user_creds = mongo.db.google_credentials.find_one({'_id': ObjectId(str(user_id))})
-    print("OBJECT: ", ObjectId(user_str_id))
+    user_creds = mongo.db.google_credentials.find_one({'_id': user_id)})
+    
 
 
 def start(update, context):
@@ -265,7 +265,8 @@ def oauth2callback():
     #user_creds = credentials_to_dict(credentials)
     mongo.db.google_credentials.insert_one(
         {
-            '_id': flask.session['user_id'],
+            '_id': ObjectId(),
+            'telegram_user_id': flask.session['user_id'],
             'token': credentials.token,
             'refresh_token': credentials.refresh_token,
             'token_uri': credentials.token_uri,
