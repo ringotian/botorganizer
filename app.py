@@ -216,7 +216,8 @@ def google_set_default_calendar(update, context):
         calendar = googleapiclient.discovery.build(
             API_SERVICE_NAME, API_VERSION, credentials=credentials)
         calendars = calendar.calendarList().list().execute()
-        pprint.pprint(calendars)
+        for calendar in calendars:
+            pprint.pprint(calendar)
         #update.message.reply_text(calendars)
 
 
