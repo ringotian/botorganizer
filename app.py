@@ -48,45 +48,23 @@ update_queue = Queue()
 dp = Dispatcher(bot, update_queue, use_context=True)
 
 
-def print_index_table():
-    return ('<table>' +
-          '<tr><td><a href="/test">Test an API request</a></td>' +
-          '<td>Submit an API request and see a formatted JSON response. ' +
-          '    Go through the authorization flow if there are no stored ' +
-          '    credentials for the user.</td></tr>' +
-          '<tr><td><a href="/authorize">Test the auth flow directly</a></td>' +
-          '<td>Go directly to the authorization flow. If there are stored ' +
-          '    credentials, you still might not be prompted to reauthorize ' +
-          '    the application.</td></tr>' +
-          '<tr><td><a href="/revoke">Revoke current credentials</a></td>' +
-          '<td>Revoke the access token associated with the current user ' +
-          '    session. After revoking credentials, if you go to the test ' +
-          '    page, you should see an <code>invalid_grant</code> error.' +
-          '</td></tr>' +
-          '<tr><td><a href="/clear">Clear Flask session credentials</a></td>' +
-          '<td>Clear the access token currently stored in the user session. ' +
-          '    After clearing the token, if you <a href="/test">test the ' +
-          '    API request</a> again, you should go back to the auth flow.' +
-          '</td></tr></table>')
-
-
 def credentials_to_dict(credentials):
-    return {'token': credentials.token,
-            'refresh_token': credentials.refresh_token,
-            'token_uri': credentials.token_uri,
-            'client_id': credentials.client_id,
-            'client_secret': credentials.client_secret,
-            'scopes': credentials.scopes,
+    return {'token': credentials['token'],
+            'refresh_token': credentials['refresh_token'],
+            'token_uri': credentials['token_uri'],
+            'client_id': credentials['client_id'],
+            'client_secret': credentials['client_secret'],
+            'scopes': credentials['scopes'],
             }
 
 
 def is_authorized(user_id):
     user_str_id = str(user_id)
-    result = mongo.db.google_credentials.find_one({'_id': 'user_str_id'})
+    result = mongo.db.google_credentials.find_one({'_id': user_str_id})
     if result is not None:
-        print('True')
+        return True
     else:
-        print('False')
+        return False
 
 
 def start(update, context):
@@ -107,50 +85,64 @@ def google_auth(update, context):
 
 
 def help(update, context):
-    text = "Чтобы начать использование бота, введите /start"
+    text = "Чтобы начать использование бота, введите /start. \
+        Чтобы отозвать разрешение на использование вашего гугл аккаунта, \
+            используйте /google_revoke"
     update.message.reply_text(text)
 
 
-def check_agenda(update, context):
-    is_authorized(update.message.chat_id)
-
-    # if check_user_creds is False:
-    #     text = "Сначала нужно авторизоваться в гугле. \
-    #         Для этого используй команду /google_auth"
-    #     update.message.reply_text(text)
-    # else:
-    #     text = "Вот твое расписание на сегодня"
-    #     update.message.reply_text(text)
+def google_revoke():
+    pass
     # if 'credentials' not in flask.session:
-    #     return flask.redirect('authorize')
+    #     return ('You need to <a href="/authorize">authorize</a> before ' +
+    #         'testing the code to revoke credentials.')
 
-    # # Load credentials from the session.
     # credentials = google.oauth2.credentials.Credentials(
     #     **flask.session['credentials'])
 
-    # calendar = googleapiclient.discovery.build(
-    #     API_SERVICE_NAME, API_VERSION, credentials=credentials)
+    # revoke = requests.post('https://accounts.google.com/o/oauth2/revoke',
+    #     params={'token': credentials.token},
+    #     headers={'content-type': 'application/x-www-form-urlencoded'})
 
-    # now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
-    # print('Getting the upcoming 10 events')
-    # events_result = calendar.events().list(calendarId='primary', timeMin=now,
-    #                                     maxResults=10, singleEvents=True,
-    #                                     orderBy='startTime').execute()
-    # print("events_result", events_result)
-    # events = events_result.get('items', [])
+    # status_code = getattr(revoke, 'status_code')
+    # if status_code == 200:
+    #     return('Credentials successfully revoked.' + print_index_table())
+    # else:
+    #     return('An error occurred.' + print_index_table())
 
-    # if not events:
-    #     print('No upcoming events found.')
-    # for event in events:
-    #     start = event['start'].get('dateTime', event['start'].get('date'))
-    #     print(start, event['summary'])
 
-    # # Save credentials back to session in case access token was refreshed.
-    # # ACTION ITEM: In a production app, you likely want to save these
-    # #              credentials in a persistent database instead.
-    # #flask.session['credentials'] = credentials_to_dict(credentials)
-    # #return flask.jsonify(**files)
-    # return 'events'
+def check_agenda(update, context):
+    user_auth_check = is_authorized(update.message.chat_id)
+    if user_auth_check is False:
+        text = "Сначала нужно авторизоваться в гугле. \
+             Для этого используй команду /google_auth"
+        update.message.reply_text(text)
+    else:
+        # Load credentials
+        user_credentials_from_db = mongo.db.google_credentials.find_one(
+            {'_id': str(update.message.chat_id)}
+            )
+        user_credentials_dict = credentials_to_dict(user_credentials_from_db)
+        credentials = google.oauth2.credentials.Credentials(
+            **user_credentials_dict)
+        calendar = googleapiclient.discovery.build(
+            API_SERVICE_NAME, API_VERSION, credentials=credentials)
+        now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
+        events_result = calendar.events().list(
+                                        calendarId='primary',
+                                        timeMin=now,
+                                        maxResults=10,
+                                        singleEvents=True,
+                                        orderBy='startTime').execute()
+        events = events_result.get('items', [])
+        text = ''
+        if not events:
+            text = 'У вас нет предстоящих событий в календаре'
+        for event in events:
+            start = event['start'].get('dateTime', event['start'].get('date'))
+            text = text + start + event['summary'] + '\n'
+        update.message.reply_text(text)
+
 
 def error(update, context):
     logger.warning('Update "%s" caused error "%s"', update, context.error)
@@ -162,6 +154,7 @@ dp.add_handler(MessageHandler(
     ))
 dp.add_handler(CommandHandler("help", help))
 dp.add_handler(CommandHandler('google_auth', google_auth))
+dp.add_handler(CommandHandler('google_revoke', google_revoke))
 dp.add_error_handler(error)
 
 thread = Thread(target=dp.start, name='dp')
@@ -280,32 +273,11 @@ def oauth2callback():
     return flask.redirect(flask.url_for('index'))
 
 
-@app.route('/revoke')
-def revoke():
-    if 'credentials' not in flask.session:
-        return ('You need to <a href="/authorize">authorize</a> before ' +
-            'testing the code to revoke credentials.')
-
-    credentials = google.oauth2.credentials.Credentials(
-        **flask.session['credentials'])
-
-    revoke = requests.post('https://accounts.google.com/o/oauth2/revoke',
-        params={'token': credentials.token},
-        headers={'content-type': 'application/x-www-form-urlencoded'})
-
-    status_code = getattr(revoke, 'status_code')
-    if status_code == 200:
-        return('Credentials successfully revoked.' + print_index_table())
-    else:
-        return('An error occurred.' + print_index_table())
-
-
 @app.route('/clear')
 def clear_credentials():
     if 'credentials' in flask.session:
         del flask.session['credentials']
-    return ('Credentials have been cleared.<br><br>' +
-        print_index_table())
+    return ('Credentials have been cleared.<br><br>')
 
 
 if __name__ == '__main__':
