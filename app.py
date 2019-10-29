@@ -253,9 +253,10 @@ def button(update, context):
     for item in calendars['items']:
         if item.get('id') == calendar_id:
             calendar_name = item.get('summary')
-    query.edit_message_text(
-        text="Календарь {} установлен по умолчанию".format(calendar_name)
-        )
+    print(calendar_name)
+    # query.edit_message_text(
+    #     text="Календарь {} установлен по умолчанию".format(calendar_name)
+    #     )
 
 
 def error(update, context):
