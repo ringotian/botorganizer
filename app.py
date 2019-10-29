@@ -219,7 +219,7 @@ def google_set_default_calendar(update, context):
         calendars = calendar.calendarList().list().execute()
         keyboard = []
         for item in calendars['items']:
-            data_to_callback = str(item['summary']) + " " + str(item['id'])
+            data_to_callback = str(item['summary']) + "::::" + str(item['id'])
             print(data_to_callback)
             keyboard.append(
                     [
@@ -240,13 +240,15 @@ def google_set_default_calendar(update, context):
 def button(update, context):
     query = update.callback_query
     print(query.data)
-    query_data = query.data.split()
+    query_data = query.data.split('::::')
     calendar_name = query_data[0]
     calendar_id = query_data[1]
-    mongo.db.google_credentials.find_one_and_update(
-                {'_id': str(update.callback_query.message.chat_id)},
-                {'$set': {'default_calendar': calendar_id}}
-        )
+    print(calendar_id)
+    print(calendar_name)
+    # mongo.db.google_credentials.find_one_and_update(
+    #             {'_id': str(update.callback_query.message.chat_id)},
+    #             {'$set': {'default_calendar': calendar_id}}
+    #     )
     query.edit_message_text(
         text="Календарь {} установлен по умолчанию".format(calendar_name)
         )
