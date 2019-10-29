@@ -228,7 +228,7 @@ def google_set_default_calendar(update, context):
 def button(update, context):
     query = update.callback_query
     mongo.db.google_credentials.find_one_and_update(
-                {'_id': str(update.message.chat_id)},
+                {'_id': str(update.callback_query.message.chat_id)},
                 {'$set': {'main_calendar': query.data}}
         )
     query.edit_message_text(text="Календарь {} установлен по умолчанию".format(query.data))
