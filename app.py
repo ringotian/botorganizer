@@ -109,8 +109,8 @@ def help(update, context):
 
 
 def check_agenda(update, context):
-    print(update.user_id)
-    is_authorized(update.user_id)
+    print(update.message.chat_id)
+    is_authorized(update.message.chat_id)
 
     # if check_user_creds is False:
     #     text = "Сначала нужно авторизоваться в гугле. \
