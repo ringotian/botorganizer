@@ -218,20 +218,15 @@ def google_set_default_calendar(update, context):
             API_SERVICE_NAME, API_VERSION, credentials=credentials)
         calendars = calendar.calendarList().list().execute()
         keyboard = []
-        data_to_callback = ''
         for item in calendars['items']:
-            data_to_callback = item['summary'] + "::::" + item['id']
-            print(data_to_callback)
             keyboard.append(
                     [
                         InlineKeyboardButton(
                             item['summary'],
-                            callback_data=str('HolidaysinUnitedStates::::en.usa#holiday@group.v.calendar.google.com')
+                            callback_data=str(item['id'])
                             )
                     ]
                     )
-            data_to_callback = ''
-        print(keyboard)
         reply_markup = InlineKeyboardMarkup(keyboard)
         update.message.reply_text(
             'Выбери календарь, который хочешь назначить по умолчанию',
@@ -241,19 +236,26 @@ def google_set_default_calendar(update, context):
 
 def button(update, context):
     query = update.callback_query
-    print(query.data)
-    query_data = query.data.split('::::')
-    calendar_name = query_data[0]
-    calendar_id = query_data[1]
-    print(calendar_id)
-    print(calendar_name)
-    # mongo.db.google_credentials.find_one_and_update(
-    #             {'_id': str(update.callback_query.message.chat_id)},
-    #             {'$set': {'default_calendar': calendar_id}}
-    #     )
-    # query.edit_message_text(
-    #     text="Календарь {} установлен по умолчанию".format(calendar_name)
-    #     )
+    calendar_id = query.data
+    mongo.db.google_credentials.find_one_and_update(
+                {'_id': str(update.callback_query.message.chat_id)},
+                {'$set': {'default_calendar': query.data}}
+        )
+    user_credentials_from_db = mongo.db.google_credentials.find_one(
+            {'_id': str(update.message.chat_id)}
+            )
+    user_credentials_dict = credentials_to_dict(user_credentials_from_db)
+    credentials = google.oauth2.credentials.Credentials(
+            **user_credentials_dict)
+    calendar = googleapiclient.discovery.build(
+            API_SERVICE_NAME, API_VERSION, credentials=credentials)
+    calendars = calendar.calendarList().list().execute()
+    for item in calendars['items']:
+        if item.get('id') == calendar_id:
+            calendar_name = item.get('summary')
+    query.edit_message_text(
+        text="Календарь {} установлен по умолчанию".format(calendar_name)
+        )
 
 
 def error(update, context):
