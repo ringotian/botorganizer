@@ -140,6 +140,7 @@ def check_agenda(update, context):
         user_credentials_from_db = mongo.db.google_credentials.find_one(
             {'_id': str(update.message.chat_id)}
             )
+        calendar_id = user_credentials_from_db['default_calendar']
         user_credentials_dict = credentials_to_dict(user_credentials_from_db)
         credentials = google.oauth2.credentials.Credentials(
             **user_credentials_dict)
@@ -147,7 +148,7 @@ def check_agenda(update, context):
             API_SERVICE_NAME, API_VERSION, credentials=credentials)
         now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
         events_result = calendar.events().list(
-                                        calendarId='primary',
+                                        calendarId=calendar_id,
                                         timeMin=now,
                                         maxResults=10,
                                         singleEvents=True,
