@@ -2,7 +2,6 @@ import os
 import flask
 import requests
 import datetime
-import json
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
@@ -11,9 +10,9 @@ from queue import Queue
 from threading import Thread
 from telegram import Bot, Update, ReplyKeyboardMarkup, InlineKeyboardButton, \
                     InlineKeyboardMarkup
-from telegram.ext import Dispatcher, CommandHandler, Filters, MessageHandler
+from telegram.ext import Dispatcher, CommandHandler, Filters, MessageHandler, \
+                    CallbackQueryHandler
 from flask_pymongo import PyMongo
-import pprint
 
 logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO,
@@ -225,6 +224,12 @@ def google_set_default_calendar(update, context):
         update.message.reply_text('Выбери календарь, который хочешь назначить по умолчанию', reply_markup=reply_markup)
 
 
+def button(update, context):
+    query = update.callback_query
+
+    query.edit_message_text(text="Selected option: {}".format(query.data))
+
+
 def error(update, context):
     logger.warning('Update "%s" caused error "%s"', update, context.error)
 
@@ -239,6 +244,7 @@ dp.add_handler(MessageHandler(
 dp.add_handler(CommandHandler("help", help))
 dp.add_handler(CommandHandler('google_auth', google_auth))
 dp.add_handler(CommandHandler('google_set_default_calendar', google_set_default_calendar))
+dp.add_handler(CallbackQueryHandler(button))
 dp.add_handler(CommandHandler('google_revoke', google_revoke))
 dp.add_error_handler(error)
 
