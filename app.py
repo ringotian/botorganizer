@@ -226,7 +226,7 @@ def google_set_default_calendar(update, context):
                     [
                         InlineKeyboardButton(
                             item['summary'],
-                            callback_data=str('Holidays in United States::::en.usa#holiday@group.v.calendar.google.com')
+                            callback_data=str('Contacts::::addressbook#contacts@group.v.calendar.google.com')
                             )
                     ]
                     )
