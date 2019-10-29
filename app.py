@@ -81,10 +81,12 @@ def credentials_to_dict(credentials):
 
 
 def is_authorized(user_id):
-    print("ID: ", user_id)
     user_str_id = str(user_id)
-    print(mongo.db.google_credentials.find_one({'_id': user_str_id}))
-
+    result = mongo.db.google_credentials.find_one({'_id': 'user_str_id'})
+    if result is not None:
+        print('True')
+    else:
+        print('False')
 
 
 def start(update, context):
