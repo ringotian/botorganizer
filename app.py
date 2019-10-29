@@ -175,6 +175,7 @@ def add_event(update, context):
             {'_id': str(update.message.chat_id)}
             )
         calendar_id = user_credentials_from_db['default_calendar']
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", calendar_id)
         user_credentials_dict = credentials_to_dict(user_credentials_from_db)
         credentials = google.oauth2.credentials.Credentials(
             **user_credentials_dict)
