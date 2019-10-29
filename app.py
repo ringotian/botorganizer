@@ -91,8 +91,8 @@ def google_auth(update, context):
 
 def help(update, context):
     text = "Чтобы начать использование бота, введите /start. \
-        Чтобы пройти выторизацию в гугле, используй /google_auth \
-        Чтобы отозвать разрешение на использование вашего гугл аккаунта, \
+Чтобы пройти выторизацию в гугле, используй /google_auth \
+Чтобы отозвать разрешение на использование вашего гугл аккаунта, \
             используй /google_revoke"
     update.message.reply_text(text)
 
@@ -186,8 +186,8 @@ def add_event(update, context):
                         body={
                             "summary": 'Test event created by telegram bot',
                             "description": "This is the test event",
-                            "start": {"dateTime": event_start, "timeZone": 'Asia/Kolkata'},
-                            "end": {"dateTime": event_end, "timeZone": 'Asia/Kolkata'},
+                            "start": {"dateTime": event_start, "timeZone": 'GMT+03:00'},
+                            "end": {"dateTime": event_end, "timeZone": 'GMT+03:00'},
                         }).execute()
         print("created event")
         print("id: ", event_result['id'])
