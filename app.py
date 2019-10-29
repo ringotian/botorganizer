@@ -15,7 +15,7 @@ from telegram.ext import Dispatcher, CommandHandler, Filters, MessageHandler, \
 from flask_pymongo import PyMongo
 
 logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
-                    level=logging.INFO,
+                    level=logging.DEBUG,
                     )
 logger = logging.getLogger(__name__)
 TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
@@ -257,7 +257,7 @@ def webhook():
     if flask.request.method == "POST":
         # retrieve the message in JSON and then transform it to Telegram object
         update = Update.de_json(flask.request.get_json(force=True), bot)
-        logger.info("Получено обновление {}".format(update.message.text))
+        logger.info("Получено обновление {}".format(update.message))
         update_queue.put(update)
         return "OK"
 
