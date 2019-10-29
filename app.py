@@ -220,6 +220,7 @@ def google_set_default_calendar(update, context):
         keyboard = []
         for item in calendars['items']:
             data_to_callback = str(item['summary']) + " " + str(item['id'])
+            print(data_to_callback)
             keyboard.append(
                     [
                         InlineKeyboardButton(
@@ -228,6 +229,7 @@ def google_set_default_calendar(update, context):
                             )
                     ]
                     )
+            data_to_callback = ''
         reply_markup = InlineKeyboardMarkup(keyboard)
         update.message.reply_text(
             'Выбери календарь, который хочешь назначить по умолчанию',
