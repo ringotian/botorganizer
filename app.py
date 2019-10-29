@@ -91,7 +91,7 @@ def google_auth(update, context):
 
 
 def help(update, context):
-    text = """
+    text = """\n
     Чтобы начать использование бота, введи /start
     Чтобы пройти выторизацию в гугле, используй /google_auth
     Чтобы отозвать разрешение на использование гугл аккаунта, используй /google_revoke.
@@ -226,8 +226,8 @@ def google_set_default_calendar(update, context):
 
 def button(update, context):
     query = update.callback_query
-
-    query.edit_message_text(text="Selected option: {}".format(query.data))
+    print(query.data)
+    #query.edit_message_text(text="Selected option: {}".format(query.data))
 
 
 def error(update, context):
