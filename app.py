@@ -90,10 +90,11 @@ def google_auth(update, context):
 
 
 def help(update, context):
-    text = "Чтобы начать использование бота, введите /start. \
-Чтобы пройти выторизацию в гугле, используй /google_auth \
-Чтобы отозвать разрешение на использование вашего гугл аккаунта, \
-            используй /google_revoke"
+    text = """
+    Чтобы начать использование бота, введи /start
+    Чтобы пройти выторизацию в гугле, используй /google_auth
+    Чтобы отозвать разрешение на использование гугл аккаунта, используй /google_revoke.
+    Чтобы выбрать календарь по умолчанию, используй /google_set_default_calendar"""
     update.message.reply_text(text)
 
 
@@ -197,6 +198,26 @@ def add_event(update, context):
         update.message.reply_text('Событие создано')
 
 
+def google_set_default_calendar(update, context):
+    user_auth_check = is_authorized(update.message.chat_id)
+    if user_auth_check is False:
+        text = "Сначала нужно авторизоваться в гугле. \
+            Для этого используй команду /google_auth"
+        update.message.reply_text(text)
+    else:
+        # Load credentials
+        user_credentials_from_db = mongo.db.google_credentials.find_one(
+            {'_id': str(update.message.chat_id)}
+            )
+        user_credentials_dict = credentials_to_dict(user_credentials_from_db)
+        credentials = google.oauth2.credentials.Credentials(
+            **user_credentials_dict)
+        calendar = googleapiclient.discovery.build(
+            API_SERVICE_NAME, API_VERSION, credentials=credentials)
+        calendars = calendar.calendarList().list().execute()
+        update.message.reply_text(calendars)
+
+
 def error(update, context):
     logger.warning('Update "%s" caused error "%s"', update, context.error)
 
@@ -210,6 +231,7 @@ dp.add_handler(MessageHandler(
     ))
 dp.add_handler(CommandHandler("help", help))
 dp.add_handler(CommandHandler('google_auth', google_auth))
+dp.add_handler(CommandHandler('google_set_default_calendar', google_set_default_calendar))
 dp.add_handler(CommandHandler('google_revoke', google_revoke))
 dp.add_error_handler(error)
 
@@ -298,7 +320,7 @@ def oauth2callback():
 def clear_credentials():
     if 'credentials' in flask.session:
         del flask.session['credentials']
-    return ('Credentials have been cleared.<br><br>')
+    return ('Креды удалены.<br><br>')
 
 
 if __name__ == '__main__':
