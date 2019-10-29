@@ -81,8 +81,9 @@ def credentials_to_dict(credentials):
 
 
 def is_authorized(user_id):
-    user_creds = mongo.db.google_credentials.find_one({'_id': ObjectId(str(user_id))})
-    print(user_creds)
+    print(user_id)
+    #user_creds = mongo.db.google_credentials.find_one({'_id': ObjectId(str(user_id))})
+    print(ObjectId(user_id))
 
 
 
@@ -109,7 +110,6 @@ def help(update, context):
 
 
 def check_agenda(update, context):
-    print(update.message.chat_id)
     is_authorized(update.message.chat_id)
 
     # if check_user_creds is False:
