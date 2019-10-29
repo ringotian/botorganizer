@@ -81,8 +81,7 @@ def credentials_to_dict(credentials):
 
 
 def is_authorized(user_id):
-    user_creds = mongo.db.google_credentials.find_one({'_id': ObjectId(user_id)})
-    print(ObjectId(user_id))
+    user_creds = mongo.db.google_credentials.find_one({'_id': ObjectId(oid=str(user_id))})
     print(user_creds)
 
 
