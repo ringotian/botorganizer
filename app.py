@@ -225,7 +225,7 @@ def google_set_default_calendar(update, context):
                     [
                         InlineKeyboardButton(
                             item['summary'],
-                            callback_data=data_to_callback
+                            callback_data=str(item['id'])
                             )
                     ]
                     )
