@@ -226,8 +226,7 @@ def google_set_default_calendar(update, context):
 
 def button(update, context):
     query = update.callback_query
-    print(query.data)
-    #query.edit_message_text(text="Selected option: {}".format(query.data))
+    query.edit_message_text(text="Selected option: {}".format(query.data))
 
 
 def error(update, context):
@@ -257,7 +256,6 @@ def webhook():
     if flask.request.method == "POST":
         # retrieve the message in JSON and then transform it to Telegram object
         update = Update.de_json(flask.request.get_json(force=True), bot)
-        logger.info("Получено обновление {}".format(update.message))
         update_queue.put(update)
         return "OK"
 
