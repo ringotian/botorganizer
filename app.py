@@ -13,6 +13,7 @@ from telegram import Bot, Update, ReplyKeyboardMarkup, InlineKeyboardButton, \
 from telegram.ext import Dispatcher, CommandHandler, Filters, MessageHandler, \
                     CallbackQueryHandler
 from flask_pymongo import PyMongo
+from dateutil import parser
 
 logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
                     level=logging.DEBUG,
@@ -164,8 +165,8 @@ def check_agenda(update, context):
             text = 'У вас нет предстоящих событий в календаре'
         for event in events:
             start = event['start'].get('dateTime', event['start'].get('date'))
-            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", event['start'])
-            text = text + start + ' ' + event['summary'] + '\n'
+            start_time = parser.parse(start).strftime("%d %B %Y %H:%M")
+            text = text + start_time + ' ' + event['summary'] + '\n'
         update.message.reply_text(f'События из календаря {calendar_name}\n{text}')
 
 
