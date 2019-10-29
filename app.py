@@ -170,9 +170,10 @@ def webhook():
         update_queue.put(update)
         return "OK"
 
+
 @app.route('/')
 def index():
-    return print_index_table()
+    return flask.redirect(TELEGRAM_BOT_URL)
 
 
 # @app.route('/test')
