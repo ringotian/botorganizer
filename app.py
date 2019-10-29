@@ -38,6 +38,7 @@ CLIENT_CONFIG_DATA = {
             "client_secret": os.environ.get('GOOGLE_CLIENT_SECRET')}
         }
 CLIENT_SECRETS_FILE = "client_secret.json"
+global MAIN_CALENDAR
 app = flask.Flask(__name__)
 app.config['MONGO_URI'] = os.environ.get('MONGODB_URI')+'?retryWrites=false'
 mongo = PyMongo(app)
@@ -226,7 +227,11 @@ def google_set_default_calendar(update, context):
 
 def button(update, context):
     query = update.callback_query
-    query.edit_message_text(text="Selected option: {}".format(query.data))
+    mongo.db.google_credentials.find_one_and_update(
+                {'_id': str(update.message.chat_id)},
+                {'$set': {'main_calendar': query.data}}
+        )
+    query.edit_message_text(text="Календарь {} установлен по умолчанию".format(query.data))
 
 
 def error(update, context):
