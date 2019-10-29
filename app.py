@@ -92,29 +92,39 @@ def google_auth(update, context):
 
 def help(update, context):
     text = "Чтобы начать использование бота, введите /start. \
+        Чтобы пройти выторизацию в гугле, используй /google_auth \
         Чтобы отозвать разрешение на использование вашего гугл аккаунта, \
-            используйте /google_revoke"
+            используй /google_revoke"
     update.message.reply_text(text)
 
 
-def google_revoke():
-    pass
-    # if 'credentials' not in flask.session:
-    #     return ('You need to <a href="/authorize">authorize</a> before ' +
-    #         'testing the code to revoke credentials.')
-
-    # credentials = google.oauth2.credentials.Credentials(
-    #     **flask.session['credentials'])
-
-    # revoke = requests.post('https://accounts.google.com/o/oauth2/revoke',
-    #     params={'token': credentials.token},
-    #     headers={'content-type': 'application/x-www-form-urlencoded'})
-
-    # status_code = getattr(revoke, 'status_code')
-    # if status_code == 200:
-    #     return('Credentials successfully revoked.' + print_index_table())
-    # else:
-    #     return('An error occurred.' + print_index_table())
+def google_revoke(update, context):
+    user_auth_check = is_authorized(update.message.chat_id)
+    if user_auth_check is False:
+        text = "Ты не авторизована. Если хочешь пройти авторизацию, \
+            используй /google_auth"
+        update.message.reply_text(text)
+    else:
+        # Load credentials
+        user_credentials_from_db = mongo.db.google_credentials.find_one(
+            {'_id': str(update.message.chat_id)}
+            )
+        user_credentials_dict = credentials_to_dict(user_credentials_from_db)
+        credentials = google.oauth2.credentials.Credentials(
+            **user_credentials_dict)
+        revoke = requests.post('https://accounts.google.com/o/oauth2/revoke',
+                    params={'token': credentials.token},
+                    headers={'content-type': 'application/x-www-form-urlencoded'})
+        status_code = getattr(revoke, 'status_code')
+        if status_code == 200:
+            mongo.db.google_credentials.find_one_and_delete(
+                    {'_id': str(update.message.chat_id)}
+                )
+            text = 'Разрешение на доступ к календарю отозвано'
+            update.message.reply_text(text)
+        else:
+            text = 'Произошла ошибка, пожалуйста, напишите на почту lad.shada@gmail.com'
+            update.message.reply_text(text)
 
 
 def check_agenda(update, context):
@@ -146,7 +156,7 @@ def check_agenda(update, context):
             text = 'У вас нет предстоящих событий в календаре'
         for event in events:
             start = event['start'].get('dateTime', event['start'].get('date'))
-            text = text + start + event['summary'] + '\n'
+            text = text + start + ' ' + event['summary'] + '\n'
         update.message.reply_text(text)
 
 
