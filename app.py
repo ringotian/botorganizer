@@ -221,8 +221,10 @@ def google_set_default_calendar(update, context):
         for item in calendars['items']:
             print(item['summary'])
             keyboard.append([InlineKeyboardButton(item['summary'])])
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        update.message.reply_text('Выбери календарь, который хочешь назначить по умолчанию', reply_markup=reply_markup)
+        print(keyboard)
+        #reply_markup = InlineKeyboardMarkup(keyboard)
+        
+        #update.message.reply_text('Выбери календарь, который хочешь назначить по умолчанию', reply_markup=reply_markup)
 
 
 def error(update, context):
