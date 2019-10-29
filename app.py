@@ -12,6 +12,7 @@ from telegram import Bot, Update, ReplyKeyboardMarkup, InlineKeyboardButton, \
                     InlineKeyboardMarkup
 from telegram.ext import Dispatcher, CommandHandler, Filters, MessageHandler
 from flask_pymongo import PyMongo
+import pprint
 
 logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO,
@@ -215,9 +216,8 @@ def google_set_default_calendar(update, context):
         calendar = googleapiclient.discovery.build(
             API_SERVICE_NAME, API_VERSION, credentials=credentials)
         calendars = calendar.calendarList().list().execute()
-        for calendar in calendars:
-            print(calendar['summary'])
-        update.message.reply_text(calendars)
+        pprint.pprint(calendars)
+        #update.message.reply_text(calendars)
 
 
 def error(update, context):
