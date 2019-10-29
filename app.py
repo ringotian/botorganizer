@@ -2,6 +2,7 @@ import os
 import flask
 import requests
 import datetime
+import json
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
@@ -216,10 +217,9 @@ def google_set_default_calendar(update, context):
         calendar = googleapiclient.discovery.build(
             API_SERVICE_NAME, API_VERSION, credentials=credentials)
         calendars = calendar.calendarList().list().execute()
-        for calendar in calendars:
-            for item in calendar:
-                print(item)
-        #update.message.reply_text(calendars)
+        app_json = json.dumps(calendars)
+        pprint.pprint(app_json)
+        update.message.reply_text(app_json)
 
 
 def error(update, context):
