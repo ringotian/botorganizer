@@ -154,13 +154,17 @@ def check_agenda(update, context):
                                         singleEvents=True,
                                         orderBy='startTime').execute()
         events = events_result.get('items', [])
+        calendars = calendar.calendarList().list().execute()
+        for item in calendars['items']:
+            if item['id'] == calendar_id:
+                calendar_name = item['summary']
         text = ''
         if not events:
             text = 'У вас нет предстоящих событий в календаре'
         for event in events:
             start = event['start'].get('dateTime', event['start'].get('date'))
             text = text + start + ' ' + event['summary'] + '\n'
-        update.message.reply_text(f'События из календаря {calendar_id}\ntext')
+        update.message.reply_text(f'События из календаря {calendar_name}\ntext')
 
 
 def add_event(update, context):
@@ -194,12 +198,16 @@ def add_event(update, context):
                             "start": {"dateTime": event_start, "timeZone": 'GMT+03:00'},
                             "end": {"dateTime": event_end, "timeZone": 'GMT+03:00'},
                         }).execute()
+        calendars = calendar.calendarList().list().execute()
+        for item in calendars['items']:
+            if item['id'] == calendar_id:
+                calendar_name = item['summary']
         print("created event")
         print("id: ", event_result['id'])
         print("summary: ", event_result['summary'])
         print("starts at: ", event_result['start']['dateTime'])
         print("ends at: ", event_result['end']['dateTime'])
-        update.message.reply_text(f'Событие создано в календаре {calendar_id}')
+        update.message.reply_text(f'Событие создано в календаре {calendar_name}')
 
 
 def google_set_default_calendar(update, context):
