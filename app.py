@@ -160,7 +160,7 @@ def check_agenda(update, context):
         for event in events:
             start = event['start'].get('dateTime', event['start'].get('date'))
             text = text + start + ' ' + event['summary'] + '\n'
-        update.message.reply_text(text)
+        update.message.reply_text(f'События из календаря {calendar_id}\ntext')
 
 
 def add_event(update, context):
@@ -175,7 +175,6 @@ def add_event(update, context):
             {'_id': str(update.message.chat_id)}
             )
         calendar_id = user_credentials_from_db['default_calendar']
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", calendar_id)
         user_credentials_dict = credentials_to_dict(user_credentials_from_db)
         credentials = google.oauth2.credentials.Credentials(
             **user_credentials_dict)
@@ -200,7 +199,7 @@ def add_event(update, context):
         print("summary: ", event_result['summary'])
         print("starts at: ", event_result['start']['dateTime'])
         print("ends at: ", event_result['end']['dateTime'])
-        update.message.reply_text('Событие создано')
+        update.message.reply_text(f'Событие создано в календаре {calendar_id}')
 
 
 def google_set_default_calendar(update, context):
