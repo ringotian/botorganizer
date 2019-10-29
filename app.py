@@ -237,10 +237,10 @@ def google_set_default_calendar(update, context):
 def button(update, context):
     query = update.callback_query
     calendar_id = query.data
-    mongo.db.google_credentials.find_one_and_update(
-                {'_id': str(update.callback_query.message.chat_id)},
-                {'$set': {'default_calendar': query.data}}
-        )
+    # mongo.db.google_credentials.find_one_and_update(
+    #             {'_id': str(update.callback_query.message.chat_id)},
+    #             {'$set': {'default_calendar': query.data}}
+    #     )
     user_credentials_from_db = mongo.db.google_credentials.find_one(
             {'_id': str(update.message.chat_id)}
             )
@@ -251,12 +251,12 @@ def button(update, context):
             API_SERVICE_NAME, API_VERSION, credentials=credentials)
     calendars = calendar.calendarList().list().execute()
     for item in calendars['items']:
-        if item.get('id') == calendar_id:
-            calendar_name = item.get('summary')
-    print(calendar_name)
-    # query.edit_message_text(
-    #     text="Календарь {} установлен по умолчанию".format(calendar_name)
-    #     )
+        if item['id'] == calendar_id:
+            calendar_name = item['summary']
+    print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', calendar_name)
+    query.edit_message_text(
+         text="Календарь {} установлен по умолчанию".format(calendar_name)
+         )
 
 
 def error(update, context):
