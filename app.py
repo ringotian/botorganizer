@@ -219,19 +219,34 @@ def google_set_default_calendar(update, context):
         calendars = calendar.calendarList().list().execute()
         keyboard = []
         for item in calendars['items']:
-            print(item['summary'])
-            keyboard.append([InlineKeyboardButton(item['summary'], callback_data=str(item['summary']))])
+            data_to_callback = str(item['summary']) + " " + str(item['id'])
+            keyboard.append(
+                    [
+                        InlineKeyboardButton(
+                            item['summary'],
+                            callback_data=data_to_callback
+                            )
+                    ]
+                    )
         reply_markup = InlineKeyboardMarkup(keyboard)
-        update.message.reply_text('Выбери календарь, который хочешь назначить по умолчанию', reply_markup=reply_markup)
+        update.message.reply_text(
+            'Выбери календарь, который хочешь назначить по умолчанию',
+            reply_markup=reply_markup
+            )
 
 
 def button(update, context):
     query = update.callback_query
+    query_data = query.data.split()
+    calendar_name = query_data[0]
+    calendar_id = query_data[1]
     mongo.db.google_credentials.find_one_and_update(
                 {'_id': str(update.callback_query.message.chat_id)},
-                {'$set': {'main_calendar': query.data}}
+                {'$set': {'default_calendar': calendar_id}}
         )
-    query.edit_message_text(text="Календарь {} установлен по умолчанию".format(query.data))
+    query.edit_message_text(
+        text="Календарь {} установлен по умолчанию".format(calendar_name)
+        )
 
 
 def error(update, context):
