@@ -219,7 +219,7 @@ def google_set_default_calendar(update, context):
         calendars = calendar.calendarList().list().execute()
         for item in calendars['items']:
             print(item['summary'])
-        update.message.reply_text(app_json)
+        #update.message.reply_text()
 
 
 def error(update, context):
