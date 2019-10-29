@@ -217,9 +217,12 @@ def google_set_default_calendar(update, context):
         calendar = googleapiclient.discovery.build(
             API_SERVICE_NAME, API_VERSION, credentials=credentials)
         calendars = calendar.calendarList().list().execute()
+        keyboard = []
         for item in calendars['items']:
             print(item['summary'])
-        #update.message.reply_text()
+            keyboard.append([InlineKeyboardButton(item['summary'])])
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        update.message.reply_text('Выбери календарь, который хочешь назначить по умолчанию', reply_markup=reply_markup)
 
 
 def error(update, context):
