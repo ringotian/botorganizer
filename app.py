@@ -242,7 +242,7 @@ def button(update, context):
     #             {'$set': {'default_calendar': query.data}}
     #     )
     user_credentials_from_db = mongo.db.google_credentials.find_one(
-            {'_id': str(update.message.chat_id)}
+            {'_id': str(query.message.chat_id)}
             )
     user_credentials_dict = credentials_to_dict(user_credentials_from_db)
     credentials = google.oauth2.credentials.Credentials(
@@ -254,9 +254,9 @@ def button(update, context):
         if item['id'] == calendar_id:
             calendar_name = item['summary']
     print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', calendar_name)
-    # query.edit_message_text(
-    #      text="Календарь {} установлен по умолчанию".format(calendar_name)
-    #      )
+    query.edit_message_text(
+          text="Календарь {} установлен по умолчанию".format(calendar_name)
+          )
 
 
 def error(update, context):
