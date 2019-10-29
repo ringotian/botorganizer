@@ -237,6 +237,7 @@ def google_set_default_calendar(update, context):
 
 def button(update, context):
     query = update.callback_query
+    print(query.data)
     query_data = query.data.split()
     calendar_name = query_data[0]
     calendar_id = query_data[1]
