@@ -174,6 +174,7 @@ def add_event(update, context):
         user_credentials_from_db = mongo.db.google_credentials.find_one(
             {'_id': str(update.message.chat_id)}
             )
+        calendar_id = user_credentials_from_db['default_calendar']
         user_credentials_dict = credentials_to_dict(user_credentials_from_db)
         credentials = google.oauth2.credentials.Credentials(
             **user_credentials_dict)
@@ -186,7 +187,7 @@ def add_event(update, context):
         event_start = tomorrow.isoformat()
         event_end = (tomorrow + datetime.timedelta(hours=1)).isoformat()
 
-        event_result = calendar.events().insert(calendarId='primary',
+        event_result = calendar.events().insert(calendarId=calendar_id,
                         body={
                             "summary": 'Test event created by telegram bot',
                             "description": "This is the test event",
