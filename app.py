@@ -166,7 +166,7 @@ def check_agenda(update, context):
         for event in events:
             start = event['start'].get('dateTime', event['start'].get('date'))
             start_time = parser.parse(start).strftime("%d %B %Y %H:%M")
-            text = text + start_time + ' ' + event['summary'] + '\n'
+            text = text + f'**{start_time} **' + ' ' + event['summary'] + '\n'
         update.message.reply_text(f'События из календаря {calendar_name}\n{text}')
 
 
