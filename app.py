@@ -186,8 +186,8 @@ def add_event(update, context):
                         body={
                             "summary": 'Test event created by telegram bot',
                             "description": "This is the test event",
-                            "start": {"dateTime": event_start, "timeZone": 'Russia/Moscow'},
-                            "end": {"dateTime": event_end, "timeZone": 'Russia/Moscow'},
+                            "start": {"dateTime": event_start, "timeZone": 'Asia/Kolkata'},
+                            "end": {"dateTime": event_end, "timeZone": 'Asia/Kolkata'},
                         }).execute()
         print("created event")
         print("id: ", event_result['id'])
