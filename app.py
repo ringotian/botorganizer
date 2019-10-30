@@ -11,7 +11,7 @@ from threading import Thread
 from telegram import Bot, Update, ReplyKeyboardMarkup, InlineKeyboardButton, \
                     InlineKeyboardMarkup
 from telegram.ext import Dispatcher, CommandHandler, Filters, MessageHandler, \
-                    CallbackQueryHandler
+                    CallbackQueryHandler, JobQueue
 from flask_pymongo import PyMongo
 from dateutil import parser
 
@@ -72,7 +72,7 @@ def is_authorized(user_id):
 def start(update, context):
     text = 'Привет! Что ты хочешь сделать?'
     my_keyboard = ReplyKeyboardMarkup([
-                                    ['Посмотреть расписание'], ['Создать мероприятие']],
+                                    ['Посмотреть расписание'], ['Создать мероприятие'], ['Запустить помидорки']],
                                     resize_keyboard=True
                                     )
     update.message.reply_text(text, reply_markup=my_keyboard)
