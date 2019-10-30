@@ -271,6 +271,21 @@ def button(update, context):
           )
 
 
+def tomato_start(update, context):
+    pass
+
+
+def callback_alarm(context):
+    context.bot.send_message(chat_id=context.job.context, text='BEEP')
+
+
+def callback_timer(update, context):
+    context.bot.send_message(chat_id=update.message.chat_id,
+                             text='Setting a timer for 1 minute!')
+
+    context.job_queue.run_once(callback_alarm, 60, context=update.message.chat_id)
+
+
 def error(update, context):
     logger.warning('Update "%s" caused error "%s"', update, context.error)
 
@@ -281,6 +296,9 @@ dp.add_handler(MessageHandler(
     ))
 dp.add_handler(MessageHandler(
     Filters.regex('^(Создать мероприятие)$'), add_event
+    ))
+dp.add_handler(MessageHandler(
+    Filters.regex('^(Запустить помидорки)$'), tomato_start
     ))
 dp.add_handler(CommandHandler("help", help))
 dp.add_handler(CommandHandler('google_auth', google_auth))
