@@ -285,7 +285,7 @@ def button(update, context):
 
 
 def callback_alarm(context):
-    print("BEEEEEEEP!!!!!")
+    logger.info("BEEEEEEEP!!!!!")
     print(context.job.context)
     context.bot.send_message(chat_id=context.job.context, text='BEEP')
 
