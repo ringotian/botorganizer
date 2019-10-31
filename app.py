@@ -210,7 +210,9 @@ def add_event(update, context):
         print("summary: ", event_result['summary'])
         print("starts at: ", event_result['start']['dateTime'])
         print("ends at: ", event_result['end']['dateTime'])
-        update.message.reply_text(f'Событие создано в календаре {calendar_name}')
+        update.message.reply_text(
+            f'Событие создано в календаре {calendar_name}'
+            )
 
 
 def google_set_default_calendar(update, context):
