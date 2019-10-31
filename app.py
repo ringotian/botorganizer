@@ -167,7 +167,9 @@ def check_agenda(update, context):
             start = event['start'].get('dateTime', event['start'].get('date'))
             start_time = parser.parse(start).strftime("%d %B %Y %H:%M")
             text = text + start_time + ' ' + event['summary'] + '\n'
-        update.message.reply_text(f'События из календаря {calendar_name}\n{text}')
+        update.message.reply_text(
+            f'События из календаря {calendar_name}\n{text}'
+            )
 
 
 def add_event(update, context):
@@ -190,7 +192,9 @@ def add_event(update, context):
 
         # Create data for event
         current_date = datetime.datetime.now().date()
-        tomorrow = datetime.datetime(current_date.year, current_date.month, current_date.day, 10) + datetime.timedelta(days=1)
+        tomorrow = datetime.datetime(
+            current_date.year, current_date.month, current_date.day, 10) + \
+            datetime.timedelta(days=1)
         event_start = tomorrow.isoformat()
         event_end = (tomorrow + datetime.timedelta(hours=1)).isoformat()
 
@@ -198,8 +202,14 @@ def add_event(update, context):
                         body={
                             "summary": 'Test event created by telegram bot',
                             "description": "This is the test event",
-                            "start": {"dateTime": event_start, "timeZone": 'GMT+03:00'},
-                            "end": {"dateTime": event_end, "timeZone": 'GMT+03:00'},
+                            "start": {
+                                "dateTime": event_start,
+                                "timeZone": 'GMT+03:00'
+                                },
+                            "end": {
+                                "dateTime": event_end,
+                                "timeZone": 'GMT+03:00'
+                                },
                         }).execute()
         calendars = calendar.calendarList().list().execute()
         for item in calendars['items']:
@@ -273,6 +283,28 @@ def button(update, context):
           )
 
 
+def tomato_start(update, context):
+    pass
+
+
+def hi_user(context):
+    context.bot.send_message(chat_id=context.job.context, text='Hi!')
+
+
+JobQueue.run_repeating('hi_user', interval=5)
+
+
+def callback_alarm(context):
+    context.bot.send_message(chat_id=context.job.context, text='BEEP')
+
+
+def callback_timer(update, context):
+    context.bot.send_message(chat_id=update.message.chat_id,
+                             text='Setting a timer for 1 minute!')
+
+    context.job_queue.run_once(callback_alarm, 60, context=update.message.chat_id)
+
+
 def error(update, context):
     logger.warning('Update "%s" caused error "%s"', update, context.error)
 
@@ -284,11 +316,15 @@ dp.add_handler(MessageHandler(
 dp.add_handler(MessageHandler(
     Filters.regex('^(Создать мероприятие)$'), add_event
     ))
+dp.add_handler(MessageHandler(
+    Filters.regex('^(Запустить помидорки)$'), tomato_start
+    ))
 dp.add_handler(CommandHandler("help", help))
 dp.add_handler(CommandHandler('google_auth', google_auth))
 dp.add_handler(CommandHandler('google_set_default_calendar', google_set_default_calendar))
 dp.add_handler(CallbackQueryHandler(button))
 dp.add_handler(CommandHandler('google_revoke', google_revoke))
+dp.add_handler(CommandHandler('timer', callback_timer))
 dp.add_error_handler(error)
 
 thread = Thread(target=dp.start, name='dp')
