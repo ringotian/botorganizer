@@ -275,6 +275,10 @@ def tomato_start(update, context):
     pass
 
 
+def hi_user(context):
+    context.bot.send_message(chat_id=context.job.context, text='Hi!')
+
+
 bot.job_queue.run_repeating('hi_user', interval=5)
 
 
