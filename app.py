@@ -312,6 +312,7 @@ dp.add_handler(CommandHandler('google_auth', google_auth))
 dp.add_handler(CommandHandler('google_set_default_calendar', google_set_default_calendar))
 dp.add_handler(CallbackQueryHandler(button))
 dp.add_handler(CommandHandler('google_revoke', google_revoke))
+dp.add_handler(CommandHandler('timer', callback_timer))
 dp.add_error_handler(error)
 
 thread = Thread(target=dp.start, name='dp')
