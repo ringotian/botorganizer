@@ -293,6 +293,7 @@ def tomato_start(update, context):
 
 
 def hi_user(context):
+    print(context.job.context)
     context.bot.send_message(chat_id=context.job.context, text='Hi!')
 
 
