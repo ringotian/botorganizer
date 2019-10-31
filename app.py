@@ -279,7 +279,7 @@ def hi_user(context):
     context.bot.send_message(chat_id=context.job.context, text='Hi!')
 
 
-dp.job_queue.run_repeating('hi_user', interval=5)
+#dp.job_queue.run_repeating('hi_user', interval=5)
 
 
 def callback_alarm(context):
