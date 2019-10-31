@@ -48,6 +48,7 @@ app.secret_key = os.environ.get('FLASK_SESSION_KEY')
 bot = Bot(TOKEN)
 update_queue = Queue()
 dp = Dispatcher(bot, update_queue, use_context=True)
+job = JobQueue(bot)
 
 
 def credentials_to_dict(credentials):
@@ -288,14 +289,14 @@ def tomato_start(update, context):
                              text='Setting a timer for 1 minute!')
 
     #print(context.job_queue)
-    JobQueue.run_once(callback=callback_alarm, when=60, context=update.message.chat_id)
+    context.job_queue.run_once(callback=callback_alarm, when=60, context=update.message.chat_id)
 
 
-# def hi_user(context):
-#     context.bot.send_message(chat_id=context.job.context, text='Hi!')
+def hi_user(context):
+    context.bot.send_message(chat_id=context.job.context, text='Hi!')
 
 
-# JobQueue.run_repeating('hi_user', interval=5)
+job.run_repeating('hi_user', interval=5)
 
 
 def callback_alarm(context):
