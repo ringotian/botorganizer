@@ -288,7 +288,7 @@ def tomato_start(update, context):
                              text='Setting a timer for 1 minute!')
 
     #print(context.job_queue)
-    JobQueue.run_once(callback_alarm, 60, context=update.message.chat_id)
+    JobQueue.run_once(callback_alarm, when=60, context=update.message.chat_id)
 
 
 # def hi_user(context):
