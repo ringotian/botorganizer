@@ -284,12 +284,20 @@ def button(update, context):
           )
 
 
+def callback_alarm(context):
+    print("BEEEEEEEP!!!!!")
+    print(context.job.context)
+    context.bot.send_message(chat_id=context.job.context, text='BEEP')
+
+
 def tomato_start(update, context):
     context.bot.send_message(chat_id=update.message.chat_id,
                              text='Setting a timer for 1 minute!')
 
     print(context.job_queue)
-    context.job_queue.run_once(callback=callback_alarm, when=60, context=update.message.chat_id)
+    context.job_queue.run_once(
+        callback_alarm, 60, context=update.message.chat_id
+        )
 
 
 # def hi_user(context):
@@ -298,10 +306,6 @@ def tomato_start(update, context):
 
 
 # dp.run_repeating(hi_user, interval=5)
-
-
-def callback_alarm(context):
-    context.bot.send_message(chat_id=context.job.context, text='BEEP')
 
 
 # def callback_timer(update, context):
