@@ -170,7 +170,7 @@ def check_agenda(update, context):
         update.message.reply_text(f'События из календаря {calendar_name}\n{text}')
 
 
-def add_event(update, context):b
+def add_event(update, context):
     user_auth_check = is_authorized(update.message.chat_id)
     if user_auth_check is False:
         text = "Сначала нужно авторизоваться в гугле. \
