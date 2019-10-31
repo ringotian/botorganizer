@@ -47,7 +47,7 @@ google_credentials = mongo.db['google_credentials']
 app.secret_key = os.environ.get('FLASK_SESSION_KEY')
 bot = Bot(TOKEN)
 update_queue = Queue()
-job = JobQueue()
+job = JobQueue(bot)
 dp = Dispatcher(bot, update_queue, job_queue=job, use_context=True)
 
 
@@ -294,9 +294,9 @@ def tomato_start(update, context):
     context.bot.send_message(chat_id=update.message.chat_id,
                              text='Setting a timer for 1 minute!')
 
-    print("Where is my context? ", context.job_queue)
+    print("Where is my context? {}".datetime.datetime.now(), context.job_queue.__dir__)
     context.job_queue.run_once(
-        callback_alarm, 60, context=update.message.chat_id
+        callback_alarm, 5, context=update.message.chat_id
         )
 
 
