@@ -284,7 +284,10 @@ def button(update, context):
 
 
 def tomato_start(update, context):
-    pass
+    context.bot.send_message(chat_id=update.message.chat_id,
+                             text='Setting a timer for 1 minute!')
+
+    context.job_queue.run_once(callback_alarm, 60, context=update.message.chat_id)
 
 
 # def hi_user(context):
@@ -294,8 +297,8 @@ def tomato_start(update, context):
 # JobQueue.run_repeating('hi_user', interval=5)
 
 
-# def callback_alarm(context):
-#     context.bot.send_message(chat_id=context.job.context, text='BEEP')
+def callback_alarm(context):
+    context.bot.send_message(chat_id=context.job.context, text='BEEP')
 
 
 # def callback_timer(update, context):
@@ -324,7 +327,6 @@ dp.add_handler(CommandHandler('google_auth', google_auth))
 dp.add_handler(CommandHandler('google_set_default_calendar', google_set_default_calendar))
 dp.add_handler(CallbackQueryHandler(button))
 dp.add_handler(CommandHandler('google_revoke', google_revoke))
-# dp.add_handler(CommandHandler('timer', callback_timer))
 dp.add_error_handler(error)
 
 thread = Thread(target=dp.start, name='dp')
