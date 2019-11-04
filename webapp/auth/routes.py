@@ -1,11 +1,13 @@
 from flask import Blueprint
+from auth.models import get_db
 
 blueprint = Blueprint('auth', __name__, url_prefix='/auth')
 
 
 @blueprint.route('/<userid>')
 def auth(userid):
-    return f"Hi! I am auth func and I've got {userid}"
+    def_db = get_db()
+    return f"Hi! I am auth func and I've got {userid} and {def_db}"
 
 
 # @blueprint.route('/authorize/<userid>')
