@@ -1,14 +1,14 @@
 from flask import Blueprint
-from webapp.db import get_db
+from webapp.db import mongo
 
 blueprint = Blueprint('auth', __name__, url_prefix='/auth')
 
 
 @blueprint.route('/<userid>')
 def auth(userid):
-    def_db = get_db()
+    #def_db = get_db()
     #def_db = None
-    return f"Hi! I am auth func and I've got {userid} and {def_db}"
+    return f"Hi! I am auth func and I've got {userid} and {mongo}"
 
 
 # @blueprint.route('/authorize/<userid>')
