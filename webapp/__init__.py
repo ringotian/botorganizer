@@ -1,7 +1,7 @@
 from flask import Flask, redirect
 from flask_pymongo import PyMongo
 
-from webapp.auth.views import blueprint as auth_blueprint
+from webapp.auth.routes import blueprint as auth_blueprint
 
 
 def create_app():
@@ -12,7 +12,6 @@ def create_app():
     mongo.init_app(app)
     app.register_blueprint(auth_blueprint)
 
-    
     @app.route('/')
     def index():
         return redirect(app.config['TELEGRAM_BOT_URL'])
