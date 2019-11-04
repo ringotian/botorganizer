@@ -1,4 +1,4 @@
-from webapp import mongo
+from app import mongo
 
 
 def get_db():
