@@ -20,3 +20,4 @@ CLIENT_CONFIG_DATA = {
             "client_secret": environ.get('GOOGLE_CLIENT_SECRET')}
         }
 HEROKU_APP_NAME = environ.get('HEROKU_APP_NAME')
+MONGO_URI = environ.get('MONGODB_URI')+'?retryWrites=false'
