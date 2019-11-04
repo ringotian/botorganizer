@@ -1,5 +1,5 @@
 from flask import Blueprint
-from auth.models import get_db
+from webapp.db import get_db
 
 blueprint = Blueprint('auth', __name__, url_prefix='/auth')
 

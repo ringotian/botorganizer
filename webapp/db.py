@@ -1,8 +1,5 @@
-from flask_pymongo import PyMongo
-from webapp import app
+from app import mongo
 
 
-def db():
-    mongo = PyMongo(app)
-
-    return mongo
+def get_db():
+    return mongo.db['google_credentials']
