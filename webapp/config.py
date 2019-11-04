@@ -21,3 +21,4 @@ CLIENT_CONFIG_DATA = {
         }
 HEROKU_APP_NAME = environ.get('HEROKU_APP_NAME')
 MONGO_URI = environ.get('MONGODB_URI')+'?retryWrites=false'
+MONGO_AUTH_COLLECTION = 'google_credentials'

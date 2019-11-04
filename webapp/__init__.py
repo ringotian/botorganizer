@@ -1,5 +1,4 @@
 from flask import Flask
-from flask_pymongo import PyMongo
 from webapp.auth.routes import blueprint as auth_blueprint
 from webapp.main.routes import blueprint as main_blueprint
 from webapp.db import mongo
