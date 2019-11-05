@@ -3,17 +3,15 @@ from threading import Thread
 from telegram import Bot
 from telegram.ext import Dispatcher, CommandHandler, Filters, MessageHandler, \
                     CallbackQueryHandler
-from flask import current_app, g
+from flask import current_app
 from webapp.handlers import start, check_agenda, add_event, help, \
     google_auth, google_set_default_calendar, google_revoke, button, error
 
 
 def telegram_bot_runner():
     bot = Bot(current_app.config.get('TOKEN'))
-    g.bot = bot
     update_queue = Queue()
     dp = Dispatcher(bot, update_queue, use_context=True)
-    g.update_queue = update_queue
 
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(MessageHandler(
@@ -33,4 +31,5 @@ def telegram_bot_runner():
 
     thread = Thread(target=dp.start, name='dp')
     thread.start()
-    
+
+    return bot, update_queue

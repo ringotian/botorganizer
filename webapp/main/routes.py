@@ -1,9 +1,9 @@
-from flask import Blueprint, redirect, current_app, request, g
+from flask import Blueprint, redirect, current_app, request
 from telegram import Update
 from webapp.bot_organizer import telegram_bot_runner
 blueprint = Blueprint('main', __name__, url_prefix='/')
 
-telegram_bot_runner()
+bot, update_queue = telegram_bot_runner()
 
 
 @blueprint.route('/')
