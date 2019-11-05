@@ -9,7 +9,7 @@ def create_app():
     app = Flask(__name__)
     app.config.from_pyfile('config.py')
     mongo.init_app(app)
+    telegram_bot_runner()
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(main_blueprint)
-    telegram_bot_runner()
     return app
