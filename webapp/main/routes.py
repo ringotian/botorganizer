@@ -1,6 +1,9 @@
 from flask import Blueprint, redirect, current_app, request, g
 from telegram import Update
+from webapp.bot_organizer import telegram_bot_runner
 blueprint = Blueprint('main', __name__, url_prefix='/')
+
+telegram_bot_runner()
 
 
 @blueprint.route('/')
@@ -12,6 +15,6 @@ def index():
 def webhook():
     if request.method == "POST":
         # retrieve the message in JSON and then transform it to Telegram object
-        update = Update.de_json(request.get_json(force=True), g.bot)
-        g.update_queue.put(update)
+        update = Update.de_json(request.get_json(force=True), bot)
+        update_queue.put(update)
         return "OK"

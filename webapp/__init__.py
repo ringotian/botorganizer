@@ -12,7 +12,7 @@ def create_app():
 
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(main_blueprint)
-    with app.app_context():
-        telegram_bot_runner()
+    #with app.app_context():
+    #    telegram_bot_runner()
 
     return app

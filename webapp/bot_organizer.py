@@ -33,3 +33,4 @@ def telegram_bot_runner():
 
     thread = Thread(target=dp.start, name='dp')
     thread.start()
+    
