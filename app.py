@@ -5,7 +5,7 @@ from telegram.ext import Dispatcher, CommandHandler, Filters, MessageHandler, \
                     CallbackQueryHandler
 from webapp import create_app
 from flask import current_app
-from handlers import start, check_agenda, add_event, help, \
+from webapp.handlers import start, check_agenda, add_event, help, \
     google_auth, google_set_default_calendar, google_revoke, button, error
 app = create_app()
 
