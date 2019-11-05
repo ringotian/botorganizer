@@ -37,5 +37,5 @@ def telegram_bot_runner():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
     telegram_bot_runner()
