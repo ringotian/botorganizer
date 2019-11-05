@@ -5,10 +5,10 @@ import google.oauth2.credentials
 import googleapiclient.discovery
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, \
                     InlineKeyboardMarkup
-from utils import is_authorized, credentials_to_dict, build_google_api_obj, \
+from webapp.utils import is_authorized, credentials_to_dict, build_google_api_obj, \
                     get_default_calendar_from_db
 from flask import current_app
-from db import mongo
+from webapp.db import mongo
 
 
 def start(update, context):
