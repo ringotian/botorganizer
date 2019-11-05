@@ -4,7 +4,7 @@ from telegram import Bot
 from telegram.ext import Dispatcher, CommandHandler, Filters, MessageHandler, \
                     CallbackQueryHandler
 from webapp import create_app
-from flask import current_app
+from flask import current_app, g
 from webapp.handlers import start, check_agenda, add_event, help, \
     google_auth, google_set_default_calendar, google_revoke, button, error
 
@@ -13,8 +13,10 @@ app = create_app()
 
 def telegram_bot_runner():
     bot = Bot(current_app.config.get('TOKEN'))
+    g.bot = bot
     update_queue = Queue()
     dp = Dispatcher(bot, update_queue, use_context=True)
+    g.update_queue = update_queue
 
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(MessageHandler(

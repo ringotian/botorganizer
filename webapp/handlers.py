@@ -5,8 +5,8 @@ import google.oauth2.credentials
 import googleapiclient.discovery
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, \
                     InlineKeyboardMarkup
-from webapp.utils import is_authorized, credentials_to_dict, build_google_api_obj, \
-                    get_default_calendar_from_db
+from webapp.utils import is_authorized, credentials_to_dict, \
+        build_google_api_obj, get_default_calendar_from_db
 from flask import current_app
 from webapp.db import mongo
 
