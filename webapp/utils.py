@@ -23,7 +23,7 @@ def is_authorized(user_id):
         return False
 
 
-def build_google_api_obj(id=update.message.chat_id):
+def build_google_api_obj(id):
     user_credentials_from_db = mongo.db.google_credentials.find_one(
             {'_id': str(id)}
             )
@@ -37,7 +37,7 @@ def build_google_api_obj(id=update.message.chat_id):
     return calendar
 
 
-def get_default_calendar_from_db(id=update.message.chat_id):
+def get_default_calendar_from_db(id):
     user_credentials_from_db = mongo.db.google_credentials.find_one(
             {'_id': str(id)}
             )
