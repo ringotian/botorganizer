@@ -1,6 +1,7 @@
 import google.oauth2.credentials
 import googleapiclient.discovery
-import settings
+from webapp.db import mongo
+from flask import current_app
 
 
 def credentials_to_dict(credentials):
@@ -30,8 +31,8 @@ def build_google_api_obj(id=update.message.chat_id):
     credentials = google.oauth2.credentials.Credentials(
             **user_credentials_dict)
     calendar = googleapiclient.discovery.build(
-            settings.API_SERVICE_NAME,
-            settings.API_VERSION,
+            current_app.config.get('API_SERVICE_NAME'),
+            current_app.config.get('API_VERSION'),
             credentials=credentials)
     return calendar
 

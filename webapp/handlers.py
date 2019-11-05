@@ -1,16 +1,14 @@
 import requests
 import datetime
 from dateutil import parser
-
 import google.oauth2.credentials
 import googleapiclient.discovery
-
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, \
                     InlineKeyboardMarkup
-
 from utils import is_authorized, credentials_to_dict, build_google_api_obj, \
                     get_default_calendar_from_db
-import settings
+from flask import current_app
+from db import mongo
 
 
 def start(update, context):
@@ -33,7 +31,9 @@ def google_auth(update, context):
         update.message.reply_text(text)
     else:
         auth_url = "https://{}.herokuapp.com/authorize/{}".format(
-                                                    settings.HEROKU_APP_NAME,
+                                                    current_app.config[
+                                                        'HEROKU_APP_NAME'
+                                                        ],
                                                     update.message.chat_id
                                                     )
         keyboard = [
@@ -148,8 +148,8 @@ def add_event(update, context):
         credentials = google.oauth2.credentials.Credentials(
             **user_credentials_dict)
         calendar = googleapiclient.discovery.build(
-            settings.API_SERVICE_NAME,
-            settings.API_VERSION,
+            current_app.config.get('API_SERVICE_NAME'),
+            current_app.config.get('API_VERSION'),
             credentials=credentials)
 
         # Create data for event
@@ -202,8 +202,8 @@ def google_set_default_calendar(update, context):
         credentials = google.oauth2.credentials.Credentials(
             **user_credentials_dict)
         calendar = googleapiclient.discovery.build(
-            settings.API_SERVICE_NAME,
-            settings.API_VERSION,
+            current_app.config.get('API_SERVICE_NAME'),
+            current_app.config.get('API_VERSION'),
             credentials=credentials)
         calendars = calendar.calendarList().list().execute()
         keyboard = []
@@ -237,8 +237,8 @@ def button(update, context):
     credentials = google.oauth2.credentials.Credentials(
             **user_credentials_dict)
     calendar = googleapiclient.discovery.build(
-            settings.API_SERVICE_NAME,
-            settings.API_VERSION,
+            current_app.config.get('API_SERVICE_NAME'),
+            current_app.config.get('API_VERSION'),
             credentials=credentials)
     calendars = calendar.calendarList().list().execute()
     for item in calendars['items']:
