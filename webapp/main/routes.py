@@ -3,7 +3,7 @@ from telegram import Update
 from webapp.bot_organizer import telegram_bot_runner
 blueprint = Blueprint('main', __name__, url_prefix='/')
 
-bot, update_queue = telegram_bot_runner()
+
 
 
 @blueprint.route('/')
@@ -13,6 +13,7 @@ def index():
 
 @blueprint.route('/{}'.format(current_app.config.get('TOKEN')), methods=['GET', 'POST'])
 def webhook():
+    bot, update_queue = telegram_bot_runner()
     if request.method == "POST":
         # retrieve the message in JSON and then transform it to Telegram object
         update = Update.de_json(request.get_json(force=True), bot)
